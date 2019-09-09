@@ -1,0 +1,21 @@
+{
+  "name": "learnd3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel -p 4567 index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/d3": "^5.7.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.2",
+    "parcel-bundler": "^1.12.3",
+    "typescript": "^3.6.2"
+  }
+}
