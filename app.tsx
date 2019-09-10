@@ -10,8 +10,16 @@ class App extends Component {
             <div className='drawer-container'>
                 <div className="drawer-item">Line chart</div>
             </div>
-            <div className='chart-container'>
-                <LineChart width={640} height={480} />
+            <div className="content-container">
+                <div className="chart-title">
+                    Line Chart
+                </div>
+                <div className="chart-container">
+                    <LineChart width={640} height={480} margin={50} />
+                </div>
+                <div className="chart-footer">
+
+                </div>
             </div>
         </>);
     }

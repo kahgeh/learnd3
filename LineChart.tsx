@@ -1,32 +1,37 @@
 import * as React from 'react'
-import { PureComponent } from "react";
 import { getMayRainfall } from './data';
-import { scaleTime, extent, scaleLinear, line, axisBottom, axisLeft, timeFormat } from "d3";
+import { scaleTime, extent, scaleLinear, line, axisBottom, axisLeft, timeFormat, select, Axis } from "d3";
+import './LineChart.css';
 
-interface Props {
+interface LineChartProps {
     width: number,
-    height: number
+    height: number,
+    margin: number;
 }
 
-export default class LineChart extends PureComponent<Props> {
-    render() {
-        const { width, height } = this.props;
-        const margin = 50;
+interface LineChartState {
+    linePath: string;
+    xAxis: Axis<number | Date | { valueOf(): number; }>;
+    yAxis: Axis<number | Date | { valueOf(): number; }>;
+}
+
+export default class LineChart extends React.Component<LineChartProps, LineChartState> {
+
+    componentDidMount() {
+        const { width, height, margin } = this.props;
 
         const measurements = getMayRainfall().map(d => ({ date: new Date(Date.parse(d.date)), value: d.value }));
 
         const minMaxDates = extent(measurements, d => d.date);
         const xScale = scaleTime()
             .domain(minMaxDates as Date[])
-            .range([0, width]);
+            .range([margin, width]);
 
-        console.log(minMaxDates);
         const minMaxValues = extent(measurements, d => d.value);
         const yScale = scaleLinear()
             .domain(minMaxValues as number[])
-            .range([height, 0]);
+            .range([height, margin]);
 
-        console.log(minMaxValues);
         const formatDate = timeFormat("%d %B");
         const xAxis = axisBottom(xScale)
             .tickFormat((d) => formatDate(d as Date));
@@ -36,10 +41,30 @@ export default class LineChart extends PureComponent<Props> {
         lineGenerator.x(d => xScale(d.date));
         lineGenerator.y(d => yScale(d.value))
 
-        const linePath = lineGenerator(measurements);
+        const linePath = lineGenerator(measurements) as string;
 
-        return (<svg width={width + 2 * margin} height={height + 2 * margin} style={{ backgroundColor: 'white' }}>
+        this.setState({ linePath, xAxis, yAxis });
+    }
+
+    componentDidUpdate() {
+        const { _, xAxis, yAxis } = this.state;
+        select(this.refs.xAxis).call(xAxis);
+        select(this.refs.yAxis).call(yAxis);
+    }
+
+    render() {
+        if (this.state === null) {
+            return null;
+        }
+        const { width, height, margin } = this.props;
+        const { linePath, _, _ } = this.state;
+
+        return (<svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
             <path d={linePath} fill="none" stroke="red" />
+            <g>
+                <g ref="xAxis" transform={`translate(0,${height})`} />
+                <g ref="yAxis" transform={`translate(${margin},0)`} />
+            </g>
         </svg>);
     }
 }

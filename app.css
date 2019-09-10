@@ -24,9 +24,32 @@
     cursor: pointer;
 }
 
-.chart-container{
+.content-container{
+    display: flex;
     flex: 5 1 60em;
+    flex-direction: column;
     background-color: burlywood;
     justify-content: center;
-    align-content: center;
+    align-content: stretch;
 }
+
+.chart-title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    flex: 0 0 3em;
+    padding: 0.5em;
+}
+
+.chart-container{
+    flex: 0 0 40em;
+    flex-direction: column;
+    background-color: burlywood;
+    justify-content: center;
+    align-content: stretch;
+    text-align: center;
+}
+
+
+
