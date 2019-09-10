@@ -27,4 +27,6 @@
 .chart-container{
     flex: 5 1 60em;
     background-color: burlywood;
+    justify-content: center;
+    align-content: center;
 }
