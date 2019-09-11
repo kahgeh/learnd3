@@ -25,12 +25,12 @@ export default class LineChart extends React.Component<LineChartProps, LineChart
         const minMaxDates = extent(measurements, d => d.date);
         const xScale = scaleTime()
             .domain(minMaxDates as Date[])
-            .range([margin, width]);
+            .range([margin, margin + width]);
 
         const minMaxValues = extent(measurements, d => d.value);
         const yScale = scaleLinear()
             .domain(minMaxValues as number[])
-            .range([height, margin]);
+            .range([margin + height, margin]);
 
         const formatDate = timeFormat("%d %B");
         const xAxis = axisBottom(xScale)
@@ -62,7 +62,7 @@ export default class LineChart extends React.Component<LineChartProps, LineChart
         return (<svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
             <path d={linePath} fill="none" stroke="red" />
             <g>
-                <g ref="xAxis" transform={`translate(0,${height})`} />
+                <g ref="xAxis" transform={`translate(0,${height + margin})`} />
                 <g ref="yAxis" transform={`translate(${margin},0)`} />
             </g>
         </svg>);
