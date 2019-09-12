@@ -51,5 +51,7 @@
     text-align: center;
 }
 
-
+.svg{
+    transform-origin: 0 0;
+}
 

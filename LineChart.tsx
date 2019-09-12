@@ -32,9 +32,9 @@ export default class LineChart extends React.Component<LineChartProps, LineChart
             .domain(minMaxValues as number[])
             .range([margin + height, margin]);
 
-        const formatDate = timeFormat("%d %B");
+        const formatDateToDayMonth = timeFormat("%d %B");
         const xAxis = axisBottom(xScale)
-            .tickFormat((d) => formatDate(d as Date));
+            .tickFormat((d) => formatDateToDayMonth(d as Date));
         const yAxis = axisLeft(yScale);
 
         const lineGenerator = line<{ date: Date; value: number }>();
