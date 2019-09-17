@@ -3,6 +3,7 @@ import { Component } from 'react'
 import { render } from 'react-dom'
 import './app.css';
 import LineChart from './LineChart'
+import DateAxis, { AxisPosition } from './DateAxis';
 
 class App extends Component {
     render() {
@@ -15,7 +16,9 @@ class App extends Component {
                     Line Chart
                 </div>
                 <div className="chart-container">
-                    <LineChart width={640} height={480} margin={50} />
+                    <LineChart width={640} height={480} margin={50}>
+                        <DateAxis position={AxisPosition.Bottom} label="Day of month" />
+                    </LineChart>
                 </div>
                 <div className="chart-footer">
 
