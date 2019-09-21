@@ -1,9 +1,4 @@
 import { Numeric } from "d3";
 
-interface ChartDimension {
-    width: number;
-    height: number;
-    margin: number;
-}
+declare type ColumnValue = Date | Number | String | undefined;
 
-type RainFallMeasurement = { date: Date, value: number };
