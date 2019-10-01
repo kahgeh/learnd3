@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { select } from 'd3';
-import { AxisProps, getScale, getAxisPositionalProperties, getValidatedInjectedProps, getFirstValueType } from './Axis';
+import { AxisProps, getScale, getAxisPositionalProperties, getValidatedInjectedAxisProps, getValueType, getValues } from './Axis';
 
 const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
 
-    const [{ position, scaleBuild, chart, data }, _] = React.useState(props);
-    const validated = getValidatedInjectedProps({ chart, data });
+    const { position, valueSource, chart, data, dispatchAxesAction } = props;
+    const injected = getValidatedInjectedAxisProps({ chart, data, dispatchAxesAction });
     const axisRef = React.useRef(null);
-    const { translation, generator, start, end } = getAxisPositionalProperties(position, validated.chart);
-    const dataType = getFirstValueType(validated.data, scaleBuild.valuesFromProperty);
-    const scale = getScale(dataType, scaleBuild, validated.data, start, end)
+    const { translation, generator, start, end } = getAxisPositionalProperties(position, injected.chart);
+    const values = getValues(valueSource, injected.data);
+    const dataType = getValueType(values[0]);
+    const scale = getScale(dataType, values, start, end)
 
     const axisGenerator = generator(scale);
 
     React.useEffect(() => {
+        injected.dispatchAxesAction({ type: 'add', payload: { type: 'numberAxis', position, valueSource, scale } });
         select(axisRef.current).call(axisGenerator);
-    });
+    }, [injected.dispatchAxesAction, valueSource]);
 
     return (
         <g ref={axisRef} transform={translation} />

@@ -1,27 +1,28 @@
-import { AxisScale, ScaleTime, timeFormat, axisBottom, axisLeft, scaleTime, scaleLinear, ScaleLinear, extent, Numeric, axisTop } from "d3";
+import { AxisScale, ScaleTime, timeFormat, axisBottom, axisLeft, scaleTime, scaleLinear, ScaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
+import { InjectedChartProps, ChartDimension, ValueSource } from ".";
+import { ChartAxis } from "./Chart";
+import { useEffect } from "react";
+import React from "react";
 
 export enum AxisPosition {
     Left = "Left",
-    Bottom = "Bottom"
+    Bottom = "Bottom",
+    Right = "Right"
 }
 
-export interface ScaleBuild {
-    valuesFromProperty: string;
-}
-
-export interface AxisProps extends InjectedChartProps {
+export interface AxisProps extends InjectedAxisProps {
     position: AxisPosition;
     label: string;
-    scaleBuild: ScaleBuild;
+    valueSource: ValueSource;
+    name?: string;
 }
 
-export interface InjectedChartProps {
-    chart?: ChartDimension;
-    data?: Datum[];
+export interface InjectedAxisProps extends InjectedChartProps {
+    dispatchAxesAction?: (action: any) => void;
 }
 
-export function getValidatedInjectedProps(injectedProps: InjectedChartProps): { chart: ChartDimension; data: Datum[] } {
-    const { chart, data } = injectedProps;
+export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps): { chart: ChartDimension; data: Datum[], dispatchAxesAction: (action: any) => void } {
+    const { chart, data, dispatchAxesAction } = injectedProps;
     if (chart === undefined || chart === null) {
         throw new Error("Injected chart property is empty")
     }
@@ -31,7 +32,11 @@ export function getValidatedInjectedProps(injectedProps: InjectedChartProps): { 
         throw new Error("Injected data property is empty")
     }
 
-    return { chart, data };
+    if (dispatchAxesAction === undefined || dispatchAxesAction === null) {
+        throw new Error("Injected dispatchAxesAction property is empty")
+    }
+
+    return { chart, data, dispatchAxesAction };
 }
 
 export function getAxisPositionalProperties(position: AxisPosition, chart: ChartDimension) {
@@ -48,6 +53,12 @@ export function getAxisPositionalProperties(position: AxisPosition, chart: Chart
         return { translation: `translate(${margin},0)`, generator: axisLeft, start, end };
     }
 
+    if (position === AxisPosition.Right) {
+        const start = height + margin;
+        const end = margin;
+        return { translation: `translate(${margin + width},0)`, generator: axisRight, start, end };
+    }
+
     const start = margin;
     const end = margin;
     return { translation: `translate(0,0)`, generator: axisTop, start, end }
@@ -61,36 +72,53 @@ function isDate(value: string | number | Date): boolean {
 
 type AllScaleTypes = ScaleLinear<number, number> | ScaleTime<Date, Date> | ScaleTime<number, number>;
 
-export function getFirstValueType(data: Datum[], propertyName: string) {
-    const firstValue = data[0][propertyName];
+export function getValueType(value: any) {
 
-    if (!Number.isNaN(firstValue)) {
+    if (!Number.isNaN(value)) {
         return 'number'
     }
-    if (isDate(firstValue)) {
+    if (isDate(value)) {
         return 'Date';
     }
 
     return 'number';
 }
 
+export function getValues(
+    valueSource: ValueSource,
+    data?: Datum[]) {
+    const { values, valuesFromProperty } = valueSource;
+    if (values === undefined && valuesFromProperty === undefined) {
+        throw new Error("scale build must have either values or valuesFromProperty defined");
+    }
+
+    if (values != undefined && valuesFromProperty != undefined) {
+        throw new Error("either values or valuesFromProperty must defined not both");
+    }
+
+    if (values) {
+        return values;
+    }
+
+    return data.map(d => d[valuesFromProperty]) as Date[] | number[];
+
+}
+
 export function getScale(
     type: string,
-    scaleBuild: ScaleBuild,
-    data: Datum[],
+    values: Date[] | number[],
     start: number,
     end: number) {
-    const propertyName = scaleBuild.valuesFromProperty;
 
     if (type == "Date") {
-        const dates = data.map(row => new Date(row[propertyName]));
+        const dates = values as Date[];
         const minMaxDates = extent(dates);
         return scaleTime()
             .domain(minMaxDates as Date[])
             .range([start, end]);
     }
 
-    const numbers = data.map(row => row[propertyName] as number);
+    const numbers = values as number[];
     const minMaxNumbers = extent(numbers);
     return scaleLinear()
         .domain(minMaxNumbers as Numeric[])
