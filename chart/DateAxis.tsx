@@ -28,7 +28,7 @@ const DateAxis: React.FunctionComponent<AxisProps & DateAxisProps> = (props) => 
     const formattedAxisGenerator = getFormattedAxisGenerator(effectiveFormat, axisGenerator, scale);
 
     React.useEffect(() => {
-        injected.dispatchAxesAction({ type: 'add', payload: { type: 'dateAxis', position, valueSource, scale } });
+        injected.dispatchAxesAction({ type: 'add', payload: { type: 'dateAxis', position, scaleBuild: { position, dataType, valueSource }, scale } });
         select(axisRef.current).call(formattedAxisGenerator);
     }, [injected.dispatchAxesAction, valueSource]);
 

@@ -15,7 +15,7 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
     const axisGenerator = generator(scale);
 
     React.useEffect(() => {
-        injected.dispatchAxesAction({ type: 'add', payload: { type: 'numberAxis', position, valueSource, scale } });
+        injected.dispatchAxesAction({ type: 'add', payload: { type: 'numberAxis', position, scaleBuild: { position, dataType, valueSource }, scale } });
         select(axisRef.current).call(axisGenerator);
     }, [injected.dispatchAxesAction, valueSource]);
 

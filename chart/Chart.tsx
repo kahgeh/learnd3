@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './Chart.css';
-import { ScaleBuild, AxisPosition } from './Axis';
-import { ScaleContinuousNumeric } from 'd3';
+import { AxisPosition, ScaleBuild } from './Axis';
 import { InjectedChartProps, ChartDimension, ValueSource } from '.';
 
 interface ChartProps {
@@ -13,7 +12,7 @@ interface ChartProps {
 }
 
 export interface ChartAxis {
-    valueSource: ValueSource;
+    scaleBuild: ScaleBuild;
     scale: any;
     position: AxisPosition;
     type: string;

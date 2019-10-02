@@ -1,13 +1,17 @@
-import { AxisScale, ScaleTime, timeFormat, axisBottom, axisLeft, scaleTime, scaleLinear, ScaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
+import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
 import { InjectedChartProps, ChartDimension, ValueSource } from ".";
-import { ChartAxis } from "./Chart";
-import { useEffect } from "react";
-import React from "react";
+import { ValueType } from "..";
 
 export enum AxisPosition {
     Left = "Left",
     Bottom = "Bottom",
     Right = "Right"
+}
+
+export interface ScaleBuild {
+    position: AxisPosition;
+    dataType: ValueType;
+    valueSource: ValueSource;
 }
 
 export interface AxisProps extends InjectedAxisProps {
@@ -70,9 +74,8 @@ function isDate(value: string | number | Date): boolean {
 }
 
 
-type AllScaleTypes = ScaleLinear<number, number> | ScaleTime<Date, Date> | ScaleTime<number, number>;
 
-export function getValueType(value: any) {
+export function getValueType(value: any): ValueType {
 
     if (!Number.isNaN(value)) {
         return 'number'
@@ -81,7 +84,7 @@ export function getValueType(value: any) {
         return 'Date';
     }
 
-    return 'number';
+    return 'unknown';
 }
 
 export function getValues(
