@@ -1,6 +1,6 @@
 import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
 import { InjectedChartProps, ChartDimension, ValueSource } from ".";
-import { ValueType } from "..";
+import { ValueType, ValueTypeName } from "..";
 
 export enum AxisPosition {
     Left = "Left",
@@ -10,7 +10,8 @@ export enum AxisPosition {
 
 export interface ScaleBuild {
     position: AxisPosition;
-    dataType: ValueType;
+    range: [ValueType, ValueType];
+    dataType: ValueTypeName;
     valueSource: ValueSource;
 }
 
@@ -75,9 +76,9 @@ function isDate(value: string | number | Date): boolean {
 
 
 
-export function getValueType(value: any): ValueType {
+export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName {
 
-    if (!Number.isNaN(value)) {
+    if (!Number.isNaN(value as any)) {
         return 'number'
     }
     if (isDate(value)) {
@@ -103,27 +104,26 @@ export function getValues(
         return values;
     }
 
-    return data.map(d => d[valuesFromProperty]) as Date[] | number[];
+    if (!data || !valuesFromProperty) {
+        return [];
+    }
 
+    return data.map(d => d[valuesFromProperty]) as Date[] | number[];
 }
 
-export function getScale(
+export function getScale<T extends ValueType>(
     type: string,
-    values: Date[] | number[],
+    range: [T | undefined, T | undefined],
     start: number,
     end: number) {
 
     if (type == "Date") {
-        const dates = values as Date[];
-        const minMaxDates = extent(dates);
         return scaleTime()
-            .domain(minMaxDates as Date[])
+            .domain(range as [T, T])
             .range([start, end]);
     }
 
-    const numbers = values as number[];
-    const minMaxNumbers = extent(numbers);
     return scaleLinear()
-        .domain(minMaxNumbers as Numeric[])
+        .domain(range as [T, T])
         .range([start, end]);
 }

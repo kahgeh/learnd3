@@ -1,6 +1,7 @@
 import { ScaleBuild } from "./Axis";
 import { ScaleContinuousNumeric } from "d3";
 import { ChartAxis } from "./Chart";
+import { ValueType } from "..";
 
 
 declare interface InjectedChartProps {
@@ -16,6 +17,6 @@ declare interface ChartDimension {
 }
 
 declare interface ValueSource {
-    values?: number[] | Date[];
+    values?: ValueType[];
     valuesFromProperty?: string;
 }

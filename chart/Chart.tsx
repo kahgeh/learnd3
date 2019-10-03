@@ -11,6 +11,12 @@ interface ChartProps {
     axes: JSX.Element[];
 }
 
+export enum ValueTypeName {
+    number = 'number',
+    Date = 'Date',
+    unknown = 'unknown'
+}
+
 export interface ChartAxis {
     scaleBuild: ScaleBuild;
     scale: any;

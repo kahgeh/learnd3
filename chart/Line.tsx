@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { line, extent } from 'd3';
-import { getScale, getValues, getValueType, getAxisPositionalProperties, AxisPosition } from './Axis';
+import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
 import { InjectedChartProps, ValueSource } from '.';
-import { ChartAxis, getValidatedInjectedProps } from './Chart';
+import { ChartAxis, getValidatedInjectedProps, ValueTypeName } from './Chart';
 import { ValueType } from '..';
+import ChartAxesFinder from './ChartAxesFinder';
 
-function getLinePath(
-    x: Date[] | number[],
-    y: Date[] | number[],
+function getLinePath<T extends ValueType>(
+    x: T[],
+    y: T[],
     xScale: any,
     yScale: any) {
     const lineGenerator = line();
@@ -40,38 +41,37 @@ const Line: React.FunctionComponent<LineProps> = (props) => {
 
 export default Line;
 
-function calculateScale(
+function calculateScale<T extends ValueType>(
     chart: any,
-    values: Date[] | number[],
-    dataType: ValueType,
+    range: [T, T],
+    dataType: ValueTypeName,
     position: AxisPosition) {
     const { start, end } = getAxisPositionalProperties(position, chart);
-    return getScale(dataType, values, start, end);
+    return getScale(dataType, range, start, end);
 }
-
 
 
 function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSource: ValueSource, chartAxes?: ChartAxis[]) {
     const validated = getValidatedInjectedProps({ chart, data });
     const values = getValues(valueSource, validated.data);
-    const dataType = getValueType(values[0]);
+    const dataType = getValueTypeName(values[0]);
+    const range = extent(values) as [ValueType, ValueType];
     if (chartAxes === null || chartAxes === undefined) {
         return {
             values,
-            scale: calculateScale(chart, values, dataType, positions[0])
+            scale: calculateScale(chart, range, dataType, positions[0])
         }
     }
 
-    const suitableAxes = chartAxes.filter((axis) =>
-        positions.indexOf(axis.position) >= 0 &&
-        axis.scaleBuild.dataType == dataType &&
-        ((axis.scaleBuild.valueSource.values
-            && valueSource.values
-            && extent(valueSource.values) == axis.scaleBuild.valueSource.values) ||
-            axis.scaleBuild.valueSource.valuesFromProperty == valueSource.valuesFromProperty));
-    const scale = (suitableAxes.length > 0) ? suitableAxes[0].scale : calculateScale(chart, values, dataType, positions[0]);
+    let widestRange = (new ChartAxesFinder(chartAxes))
+        .getSimilarPositionAndType(positions, dataType)
+        .withinRange(range)
+        .mostNarrowRange();
+
+    const scale = (widestRange) ? widestRange.scale : calculateScale(chart, range, dataType, positions[0]);
     return {
         values,
         scale
     };
+
 }
