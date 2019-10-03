@@ -63,12 +63,12 @@ function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSou
         }
     }
 
-    let widestRange = (new ChartAxesFinder(chartAxes))
+    let mostNarrowRange = (new ChartAxesFinder(chartAxes))
         .getSimilarPositionAndType(positions, dataType)
         .withinRange(range)
         .mostNarrowRange();
 
-    const scale = (widestRange) ? widestRange.scale : calculateScale(chart, range, dataType, positions[0]);
+    const scale = (mostNarrowRange) ? mostNarrowRange.scale : calculateScale(chart, range, dataType, positions[0]);
     return {
         values,
         scale
