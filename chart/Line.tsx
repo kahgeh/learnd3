@@ -31,7 +31,6 @@ const Line: React.FunctionComponent<LineProps> = (props) => {
 
     const xBuild = getLineScale(chart, data, [AxisPosition.Bottom], x, chartAxes);
     const yBuild = getLineScale(chart, data, [AxisPosition.Left, AxisPosition.Right], y, chartAxes);
-
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
 
     return (
