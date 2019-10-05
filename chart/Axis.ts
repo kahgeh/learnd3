@@ -1,6 +1,7 @@
 import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
 import { InjectedChartProps, ChartDimension, ValueSource } from ".";
-import { ValueType, ValueTypeName } from "..";
+import { ValueType } from "..";
+import { ValueTypeName } from "./Chart";
 
 export enum AxisPosition {
     Left = "Left",
@@ -74,18 +75,16 @@ function isDate(value: string | number | Date): boolean {
     return (d instanceof Date && isFinite(d));
 }
 
-
-
 export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName {
 
     if (!Number.isNaN(value as any)) {
-        return 'number'
+        return ValueTypeName.number;
     }
     if (isDate(value)) {
-        return 'Date';
+        return ValueTypeName.Date;
     }
 
-    return 'unknown';
+    return ValueTypeName.unknown;
 }
 
 export function getValues(
