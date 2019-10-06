@@ -4,19 +4,29 @@ import { ChartAxis } from "./Chart";
 import { ValueType } from "..";
 
 
-declare interface InjectedChartProps {
-    chart?: ChartDimension;
-    data?: Datum[];
-    dispatchAxesAction?: (action: any) => void;
-}
-
-declare interface ChartDimension {
-    width: number;
-    height: number;
-    margin: number;
-}
-
-declare interface ValueSource {
-    values?: ValueType[];
-    valuesFromProperty?: string;
+declare module rd3 {
+    interface InjectedChartProps {
+        chart?: ChartDimension;
+        data?: Datum[];
+        dispatchAxesAction?: (action: any) => void;
+    }
+    interface ChartDimension {
+        width: number;
+        height: number;
+        margin: number;
+    }
+    interface ValueSource {
+        values?: ValueType[];
+        valuesFromProperty?: string;
+    }
+    interface PointValueSource {
+        fixedSize?: number;
+        values?: number[];
+        valuesFromProperty?: string;
+    }
+    interface Series {
+        seriesName: string;
+        color: string;
+        visible: boolean;
+    }
 }

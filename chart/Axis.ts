@@ -1,5 +1,5 @@
 import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
-import { InjectedChartProps, ChartDimension, ValueSource } from ".";
+import { rd3 } from ".";
 import { ValueType } from "..";
 import { ValueTypeName } from "./Chart";
 
@@ -13,21 +13,21 @@ export interface ScaleBuild {
     position: AxisPosition;
     range: [ValueType, ValueType];
     dataType: ValueTypeName;
-    valueSource: ValueSource;
+    valueSource: rd3.ValueSource;
 }
 
 export interface AxisProps extends InjectedAxisProps {
     position: AxisPosition;
     label: string;
-    valueSource: ValueSource;
+    valueSource: rd3.ValueSource;
     name?: string;
 }
 
-export interface InjectedAxisProps extends InjectedChartProps {
+export interface InjectedAxisProps extends rd3.InjectedChartProps {
     dispatchAxesAction?: (action: any) => void;
 }
 
-export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps): { chart: ChartDimension; data: Datum[], dispatchAxesAction: (action: any) => void } {
+export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps): { chart: rd3.ChartDimension; data: Datum[], dispatchAxesAction: (action: any) => void } {
     const { chart, data, dispatchAxesAction } = injectedProps;
     if (chart === undefined || chart === null) {
         throw new Error("Injected chart property is empty")
@@ -45,7 +45,7 @@ export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps):
     return { chart, data, dispatchAxesAction };
 }
 
-export function getAxisPositionalProperties(position: AxisPosition, chart: ChartDimension) {
+export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.ChartDimension) {
     const { width, height, margin } = chart;
     if (position === AxisPosition.Bottom) {
         const start = margin;
@@ -88,14 +88,14 @@ export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName {
 }
 
 export function getValues(
-    valueSource: ValueSource,
+    valueSource: rd3.ValueSource,
     data?: Datum[]) {
     const { values, valuesFromProperty } = valueSource;
-    if (values === undefined && valuesFromProperty === undefined) {
+    if (!(values || valuesFromProperty)) {
         throw new Error("scale build must have either values or valuesFromProperty defined");
     }
 
-    if (values != undefined && valuesFromProperty != undefined) {
+    if (!values && !valuesFromProperty) {
         throw new Error("either values or valuesFromProperty must defined not both");
     }
 

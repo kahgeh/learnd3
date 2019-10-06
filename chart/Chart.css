@@ -1,4 +1,10 @@
+.chart{
+    display: flex;
+    background-color: white;
+    border: 0.2em solid lightslategray;
+    align-items: center;
+}
+
 .chart-svg{
     background-color: white;
-    border: 1em solid lightslategray;
 }

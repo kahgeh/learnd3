@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { line, extent } from 'd3';
+import { line, extent, values } from 'd3';
 import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
-import { InjectedChartProps, ValueSource } from '.';
-import { ChartAxis, getValidatedInjectedProps, ValueTypeName } from './Chart';
+import { rd3 } from '.';
+import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames } from './Chart';
 import { ValueType } from '..';
 import ChartAxesFinder from './ChartAxesFinder';
 
@@ -18,27 +18,39 @@ function getLinePath<T extends ValueType>(
     return lineGenerator(x.map((xi, i) => [xi, y[i]])) as string;
 }
 
-interface LineProps extends InjectedChartProps {
+interface LineProps extends rd3.InjectedChartProps {
+    index?: number;
+    visible?: boolean;
     color: string;
-    x: ValueSource;
-    y: ValueSource;
+    x: rd3.ValueSource;
+    y: rd3.ValueSource;
+    name?: string;
+    points?: rd3.PointValueSource;
     chartAxes?: ChartAxis[];
+    dispatchSeriesAction?: (action: any) => void;
 }
 
-const Line: React.FunctionComponent<LineProps> = (props) => {
+function getSeriesName(props: LineProps) {
+    const { index, y, name } = props;
 
-    const { color, x, y, chart, data, chartAxes } = props;
+    if (name) {
+        return name;
+    }
 
-    const xBuild = getLineScale(chart, data, [AxisPosition.Bottom], x, chartAxes);
-    const yBuild = getLineScale(chart, data, [AxisPosition.Left, AxisPosition.Right], y, chartAxes);
-    const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
+    if (y && y.valuesFromProperty) {
+        return y.valuesFromProperty;
+    }
 
-    return (
-        <path d={linePath} fill="none" stroke={color} />
-    );
+    return `series-${index}`
 }
 
-export default Line;
+function getDispatchSeriesAction(props: LineProps) {
+    const { dispatchSeriesAction } = props;
+    if (!dispatchSeriesAction) {
+        return (action: SeriesAction) => { console.log('WARNING: empty dispatch being called') };
+    }
+    return dispatchSeriesAction;
+}
 
 function calculateScale<T extends ValueType>(
     chart: any,
@@ -49,8 +61,7 @@ function calculateScale<T extends ValueType>(
     return getScale(dataType, range, start, end);
 }
 
-
-function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSource: ValueSource, chartAxes?: ChartAxis[]) {
+function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSource: rd3.ValueSource, chartAxes?: ChartAxis[]) {
     const validated = getValidatedInjectedProps({ chart, data });
     const values = getValues(valueSource, validated.data);
     const dataType = getValueTypeName(values[0]);
@@ -74,3 +85,33 @@ function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSou
     };
 
 }
+
+const Line: React.FunctionComponent<LineProps> = (props) => {
+
+    const { color, x, y, chart, data, points, chartAxes, visible } = props;
+    const xBuild = getLineScale(chart, data, [AxisPosition.Bottom], x, chartAxes);
+    const yBuild = getLineScale(chart, data, [AxisPosition.Left, AxisPosition.Right], y, chartAxes);
+    const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
+    const seriesName = getSeriesName(props);
+    const dispatchSeriesAction = getDispatchSeriesAction(props);
+    React.useEffect(() => {
+        dispatchSeriesAction({ type: SeriesActionNames.add, payload: { color, seriesName, xBuild, yBuild } });
+    }, [dispatchSeriesAction, color, seriesName]);
+
+    if (!(visible === undefined || visible === null || visible)) {
+        return null;
+    }
+    return (
+
+        <>
+            <path d={linePath} fill="none" stroke={color} />
+            {
+                (points) ? {
+
+                } : null
+            }
+        </>
+    );
+}
+
+export default Line;
