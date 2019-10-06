@@ -14,7 +14,7 @@
     padding: 0.2em 0em 0.2em 0em;
 }
 
-.legend-series-rect {
+.legend-series-circle {
     font-size: 0.8em;
     height: 0.8em;
     border-radius: 3em;
@@ -24,4 +24,8 @@
 .legend-series-text {
     font-size: 0.8em;
     padding: 0em 1em 0em 1em;
+}
+
+.disabled {
+    color: lightgray;
 }

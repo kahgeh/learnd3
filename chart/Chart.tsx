@@ -36,7 +36,7 @@ function axesReducer(state, action) {
 
 export enum SeriesActionNames {
     add = 'add',
-    hide = 'hide'
+    toggleVisibility = 'toggleVisibility'
 }
 
 export type SeriesAction = {
@@ -44,12 +44,45 @@ export type SeriesAction = {
     payload: any;
 }
 
+export function getSeriesName(series: rd3.Series, index: number) {
+    let seriesName = series.seriesName;
+    if (!series.seriesName) {
+        seriesName = `Series ${index}`;
+    }
+    return seriesName;
+}
+
+export function getVisibility(visible?: boolean) {
+    if (visible === null || visible === undefined) {
+        return true;
+    }
+    return visible;
+}
+
+function disableSeries(chartSeries: rd3.Series[], index: number) {
+    return chartSeries.map((series, i) =>
+        (i === index) ? { ...series, visible: !getVisibility(series.visible) } :
+            { ...series });
+}
+
+function getSeriesVisibity(index: number, chartSeries?: rd3.Series[]) {
+    if (!chartSeries) {
+        return null;
+    }
+
+    if (chartSeries.length <= index) {
+        return null
+    }
+
+    return chartSeries[index].visible;
+}
+
 function seriesReducer(state: rd3.Series[], action: SeriesAction) {
     switch (action.type) {
-        case 'add':
+        case SeriesActionNames.add:
             return [...state, action.payload];
-        case 'hide':
-
+        case SeriesActionNames.toggleVisibility:
+            return disableSeries(state, action.payload.index);
         default:
             throw new Error(`unexpected action ${action.type}`);
     }
@@ -80,14 +113,23 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
 
     const { width, height, margin, data, axes } = props;
     const [chartAxes, dispatchAxesAction] = React.useReducer(axesReducer, []);
-    const [series, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
+    const [chartSeries, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
 
     return (<div className="chart">
         <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
             {
                 props.children ? getArray(props.children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
                     const originalProps = child.props;
-                    return React.cloneElement(child, { ...originalProps, key: i, chart: { height, width, margin }, data, index: i, chartAxes, dispatchSeriesAction });
+                    return React.cloneElement(child, {
+                        ...originalProps,
+                        key: i,
+                        chart: { height, width, margin },
+                        data,
+                        index: i,
+                        chartAxes,
+                        visible: getSeriesVisibity(i, chartSeries),
+                        dispatchSeriesAction
+                    });
                 }) : null
             }
             <g>
@@ -99,7 +141,10 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                 }
             </g>
         </svg>
-        <Legend chartSeries={series} />
+        <Legend
+            chartSeries={chartSeries}
+            dispatchSeriesAction={dispatchSeriesAction}
+        />
     </div>);
 }
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { line, extent, values } from 'd3';
 import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
 import { rd3 } from '.';
-import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames } from './Chart';
+import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility } from './Chart';
 import { ValueType } from '..';
 import ChartAxesFinder from './ChartAxesFinder';
 
@@ -88,29 +88,25 @@ function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSou
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
 
-    const { color, x, y, chart, data, points, chartAxes, visible } = props;
+    const { color, x, y, chart, data, points, chartAxes, index, visible } = props;
     const xBuild = getLineScale(chart, data, [AxisPosition.Bottom], x, chartAxes);
     const yBuild = getLineScale(chart, data, [AxisPosition.Left, AxisPosition.Right], y, chartAxes);
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
     const seriesName = getSeriesName(props);
     const dispatchSeriesAction = getDispatchSeriesAction(props);
     React.useEffect(() => {
-        dispatchSeriesAction({ type: SeriesActionNames.add, payload: { color, seriesName, xBuild, yBuild } });
+        dispatchSeriesAction({ type: SeriesActionNames.add, payload: { color, seriesName, index, xBuild, yBuild } });
     }, [dispatchSeriesAction, color, seriesName]);
-
-    if (!(visible === undefined || visible === null || visible)) {
-        return null;
-    }
     return (
+        !getVisibility(visible) ? null :
+            <>
+                <path d={linePath} fill="none" stroke={color} />
+                {
+                    (points) ? {
 
-        <>
-            <path d={linePath} fill="none" stroke={color} />
-            {
-                (points) ? {
-
-                } : null
-            }
-        </>
+                    } : null
+                }
+            </>
     );
 }
 
