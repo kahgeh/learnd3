@@ -4,7 +4,8 @@ import { AxisPosition, ScaleBuild } from './Axis';
 import { rd3 } from '.';
 import Legend from './Legend';
 import { ValueType } from '..';
-import { Point } from './PointVisual';
+import { Point, PointVisual, renderToolTip } from './PointVisual';
+import { format } from 'd3';
 
 interface ChartProps {
     width: number;
@@ -32,9 +33,24 @@ export interface ChartAxis {
     type: string;
 }
 
-export function mapXYtoPoints(x: ValueBuild, y: ValueBuild): Point[] {
+function getToolTip(value: any, pointVisual?: PointVisual) {
+    if (!pointVisual || !pointVisual.toolTipTemplate) {
+        return null;
+    }
+
+    return renderToolTip(pointVisual.toolTipTemplate, value);
+}
+
+export function mapXYtoPoints(x: ValueBuild, y: ValueBuild, pointVisual?: PointVisual): Point[] {
     let baseArray = x.values.length < y.values.length ? x.values : y.values;
-    return baseArray.map((_, i) => { return { x: x.scale(x.values[i]), y: y.scale(y.values[i]) }; });
+
+    return baseArray.map((_, i) => {
+        return {
+            x: x.scale(x.values[i]),
+            y: y.scale(y.values[i]),
+            toolTip: getToolTip({ x: x.values[i], y: y.values[i] }, pointVisual)
+        };
+    });
 }
 
 function axesReducer(state, action) {

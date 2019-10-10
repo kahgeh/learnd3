@@ -94,7 +94,7 @@ const Line: React.FunctionComponent<LineProps> = (props) => {
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
     const seriesName = getSeriesName(props);
     const dispatchSeriesAction = getDispatchSeriesAction(props);
-    const points = mapXYtoPoints(xBuild, yBuild);
+    const points = mapXYtoPoints(xBuild, yBuild, pointVisual);
 
     React.useEffect(() => {
         dispatchSeriesAction({ type: SeriesActionNames.add, payload: { color, seriesName, index, xBuild, yBuild } });

@@ -40,7 +40,7 @@ const App: React.FunctionComponent = () => {
                     <Line color="green"
                         x={{ valuesFromProperty: 'date' }}
                         y={{ valuesFromProperty: 'value' }}
-                        pointVisual={{ generator: circle, size: { fixedSize: 5 } }} />
+                        pointVisual={{ generator: circle, toolTipTemplate: "value:{y}\ndate:{x}", size: { fixedSize: 5 } }} />
                     <Line color="red"
                         x={{ values: [1, 2, 3, 4] }}
                         y={{ values: [10, 20, 30, 40] }}
