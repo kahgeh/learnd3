@@ -37,6 +37,9 @@ export function generate(pointVisual: PointVisual, color: string, points: Point[
 
 }
 
+export function rectangle(index: number, x: number, y: number, color: string, size: number) {
+    return (<rect key={index} x={x - size} y={y - size} width={size * 2} height={size * 2} fill={color} />);
+}
 
 export function circle(index: number, x: number, y: number, color: string, size: number) {
     return (<circle key={index} cx={x} cy={y} fill={color} r={size} />);

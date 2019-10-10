@@ -7,7 +7,7 @@ import NumberAxis from './chart/NumberAxis';
 import { getMayRainfall } from './data/rainfall';
 import { AxisPosition } from './chart/Axis';
 import Line from './chart/Line';
-import { circle } from './chart/PointVisual';
+import { circle, rectangle } from './chart/PointVisual';
 
 const App: React.FunctionComponent = () => {
     const measurements = getMayRainfall().map(d => ({ date: new Date(Date.parse(d.date)), value: d.value }));
@@ -44,7 +44,7 @@ const App: React.FunctionComponent = () => {
                     <Line color="red"
                         x={{ values: [1, 2, 3, 4] }}
                         y={{ values: [10, 20, 30, 40] }}
-                        pointVisual={{ generator: circle, size: { fixedSize: 5 } }} />
+                        pointVisual={{ generator: rectangle, size: { fixedSize: 5 } }} />
                 </Chart>
             </div>
             <div className="chart-footer">
