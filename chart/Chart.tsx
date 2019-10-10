@@ -3,6 +3,8 @@ import './Chart.css';
 import { AxisPosition, ScaleBuild } from './Axis';
 import { rd3 } from '.';
 import Legend from './Legend';
+import { ValueType } from '..';
+import { Point } from './PointVisual';
 
 interface ChartProps {
     width: number;
@@ -10,6 +12,11 @@ interface ChartProps {
     margin: number;
     data: Datum[];
     axes?: JSX.Element[];
+}
+
+export interface ValueBuild {
+    scale: any;
+    values: ValueType[];
 }
 
 export enum ValueTypeName {
@@ -23,6 +30,11 @@ export interface ChartAxis {
     scale: any;
     position: AxisPosition;
     type: string;
+}
+
+export function mapXYtoPoints(x: ValueBuild, y: ValueBuild): Point[] {
+    let baseArray = x.values.length < y.values.length ? x.values : y.values;
+    return baseArray.map((_, i) => { return { x: x.scale(x.values[i]), y: y.scale(y.values[i]) }; });
 }
 
 function axesReducer(state, action) {

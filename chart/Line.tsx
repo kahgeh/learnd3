@@ -2,10 +2,10 @@ import * as React from 'react';
 import { line, extent, values } from 'd3';
 import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
 import { rd3 } from '.';
-import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility } from './Chart';
+import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility, mapXYtoPoints, ValueBuild } from './Chart';
 import { ValueType } from '..';
 import ChartAxesFinder from './ChartAxesFinder';
-
+import { PointVisual, generate } from './PointVisual';
 function getLinePath<T extends ValueType>(
     x: T[],
     y: T[],
@@ -25,7 +25,7 @@ interface LineProps extends rd3.InjectedChartProps {
     x: rd3.ValueSource;
     y: rd3.ValueSource;
     name?: string;
-    points?: rd3.PointValueSource;
+    pointVisual?: PointVisual;
     chartAxes?: ChartAxis[];
     dispatchSeriesAction?: (action: any) => void;
 }
@@ -61,7 +61,7 @@ function calculateScale<T extends ValueType>(
     return getScale(dataType, range, start, end);
 }
 
-function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSource: rd3.ValueSource, chartAxes?: ChartAxis[]) {
+function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSource: rd3.ValueSource, chartAxes?: ChartAxis[]): ValueBuild {
     const validated = getValidatedInjectedProps({ chart, data });
     const values = getValues(valueSource, validated.data);
     const dataType = getValueTypeName(values[0]);
@@ -88,12 +88,14 @@ function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSou
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
 
-    const { color, x, y, chart, data, points, chartAxes, index, visible } = props;
+    const { color, x, y, chart, data, pointVisual, chartAxes, index, visible } = props;
     const xBuild = getLineScale(chart, data, [AxisPosition.Bottom], x, chartAxes);
     const yBuild = getLineScale(chart, data, [AxisPosition.Left, AxisPosition.Right], y, chartAxes);
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
     const seriesName = getSeriesName(props);
     const dispatchSeriesAction = getDispatchSeriesAction(props);
+    const points = mapXYtoPoints(xBuild, yBuild);
+
     React.useEffect(() => {
         dispatchSeriesAction({ type: SeriesActionNames.add, payload: { color, seriesName, index, xBuild, yBuild } });
     }, [dispatchSeriesAction, color, seriesName]);
@@ -102,9 +104,8 @@ const Line: React.FunctionComponent<LineProps> = (props) => {
             <>
                 <path d={linePath} fill="none" stroke={color} />
                 {
-                    (points) ? {
-
-                    } : null
+                    (pointVisual) ?
+                        generate(pointVisual, color, points) : null
                 }
             </>
     );

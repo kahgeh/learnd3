@@ -19,14 +19,11 @@ declare module rd3 {
         values?: ValueType[];
         valuesFromProperty?: string;
     }
-    interface PointValueSource {
-        fixedSize?: number;
-        values?: number[];
-        valuesFromProperty?: string;
-    }
+
     interface Series {
         seriesName: string;
         color: string;
         visible: boolean;
+        point: PointVisual;
     }
 }

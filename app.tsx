@@ -7,6 +7,7 @@ import NumberAxis from './chart/NumberAxis';
 import { getMayRainfall } from './data/rainfall';
 import { AxisPosition } from './chart/Axis';
 import Line from './chart/Line';
+import { circle } from './chart/PointVisual';
 
 const App: React.FunctionComponent = () => {
     const measurements = getMayRainfall().map(d => ({ date: new Date(Date.parse(d.date)), value: d.value }));
@@ -28,7 +29,7 @@ const App: React.FunctionComponent = () => {
                             format="%d %B" />),
                         (<NumberAxis
                             position={AxisPosition.Left}
-                            label="Rainfal(mm)"
+                            label="Rainfall(mm)"
                             valueSource={{ valuesFromProperty: 'value' }} />),
                         (<NumberAxis
                             name="redaxis"
@@ -38,10 +39,12 @@ const App: React.FunctionComponent = () => {
                 >
                     <Line color="green"
                         x={{ valuesFromProperty: 'date' }}
-                        y={{ valuesFromProperty: 'value' }} />
+                        y={{ valuesFromProperty: 'value' }}
+                        pointVisual={{ generator: circle, size: { fixedSize: 5 } }} />
                     <Line color="red"
                         x={{ values: [1, 2, 3, 4] }}
-                        y={{ values: [10, 20, 30, 40] }} />
+                        y={{ values: [10, 20, 30, 40] }}
+                        pointVisual={{ generator: circle, size: { fixedSize: 5 } }} />
                 </Chart>
             </div>
             <div className="chart-footer">
