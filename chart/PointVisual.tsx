@@ -47,19 +47,18 @@ export function renderToolTip(template: string, value: any) {
 };
 
 export function rectangle(index: number, x: number, y: number, color: string, size: number, toolTip?: string) {
-    if (toolTip) {
-        return (<rect key={index} x={x - size} y={y - size} width={size * 2} height={size * 2} fill={color}>
-            <title>{toolTip}</title>
-        </rect>);
-    }
-    return (<rect key={index} x={x - size} y={y - size} width={size * 2} height={size * 2} fill={color} />);
+
+    return (<rect key={index} x={x - size} y={y - size} width={size * 2} height={size * 2} fill={color}>
+        {
+            toolTip ? <title>{toolTip}</title> : null
+        }
+    </rect>);
 }
 
 export function circle(index: number, x: number, y: number, color: string, size: number, toolTip?: string) {
-    if (toolTip) {
-        return (<circle key={index} cx={x} cy={y} fill={color} r={size} >
-            <title>{toolTip}</title>
-        </circle>);
-    }
-    return (<circle key={index} cx={x} cy={y} fill={color} r={size} />);
+    return (<circle key={index} cx={x} cy={y} fill={color} r={size} >
+        {
+            toolTip ? <title>{toolTip}</title> : null
+        }
+    </circle>);
 }
