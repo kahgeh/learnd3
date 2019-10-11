@@ -21,6 +21,7 @@ export interface AxisProps extends InjectedAxisProps {
     label: string;
     valueSource: rd3.ValueSource;
     name?: string;
+    showGridLines?: boolean;
 }
 
 export interface InjectedAxisProps extends rd3.InjectedChartProps {
@@ -56,7 +57,7 @@ export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.C
     if (position === AxisPosition.Left) {
         const start = height + margin;
         const end = margin;
-        return { translation: `translate(${margin},0)`, generator: axisLeft, start, end };
+        return { translation: `translate(${margin},0)`, generator: axisLeft, start, end, height, width, margin };
     }
 
     if (position === AxisPosition.Right) {

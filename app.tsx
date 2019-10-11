@@ -30,6 +30,7 @@ const App: React.FunctionComponent = () => {
                         (<NumberAxis
                             position={AxisPosition.Left}
                             label="Rainfall(mm)"
+                            showGridLines={true}
                             valueSource={{ valuesFromProperty: 'value' }} />),
                         (<NumberAxis
                             name="redaxis"
