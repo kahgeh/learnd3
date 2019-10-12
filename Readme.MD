@@ -38,7 +38,7 @@ Next I'd probably want to throw in axes to provide some visual context, may be b
               y={{ values: [10, 20, 30, 40] }}/>
     </Chart>    
 
-![Line with vertical axis](https://gist.github.com/kahgeh/a473093ea66190b2449fa85788f5e66c#file-simplelinechart-png)
+![Line with vertical axis](https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/cacd60b7259fdef3f83a1a894af4e62302e8a84c/simplelinechart.png)
 
 # References
 1. https://app.pluralsight.com/library/courses/d3-getting-started/table-of-contents
