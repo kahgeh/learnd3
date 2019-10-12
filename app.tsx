@@ -8,6 +8,7 @@ import { getMayRainfall } from './data/rainfall';
 import { AxisPosition } from './chart/Axis';
 import Line from './chart/Line';
 import { circle, rectangle } from './chart/PointVisual';
+import { curveMonotoneX, curveStep } from 'd3';
 
 const App: React.FunctionComponent = () => {
     const measurements = getMayRainfall().map(d => ({ date: new Date(Date.parse(d.date)), value: d.value }));
@@ -20,7 +21,7 @@ const App: React.FunctionComponent = () => {
                 Line Chart
             </div>
             <div className="chart-container">
-                <Chart width={640} height={480} margin={50} data={measurements}
+                {/* <Chart width={640} height={480} margin={50} data={measurements}
                     axes={
                         [(<DateAxis
                             position={AxisPosition.Bottom}
@@ -41,12 +42,24 @@ const App: React.FunctionComponent = () => {
                     <Line color="green"
                         x={{ valuesFromProperty: 'date' }}
                         y={{ valuesFromProperty: 'value' }}
-                        pointVisual={{ generator: circle, toolTipTemplate: "value:{y}\ndate:{x}", size: { fixedSize: 5 } }} />
+                        pointVisual={{ generator: circle, toolTipTemplate: "value:{y}\ndate:{x}", size: { fixedSize: 5 } }}
+                        curve={curveMonotoneX} />
                     <Line color="red"
                         x={{ values: [1, 2, 3, 4] }}
                         y={{ values: [10, 20, 30, 40] }}
-                        pointVisual={{ generator: rectangle, size: { fixedSize: 5 } }} />
-                </Chart>
+                        pointVisual={{ generator: rectangle, size: { fixedSize: 5 } }}
+                        curve={curveStep} />
+                </Chart> */
+                    <Chart width={640} height={480} margin={50}
+                        axes={[
+                            (<NumberAxis
+                                position={AxisPosition.Left}
+                                valueSource={{ values: [0, 40] }} />)
+                        ]}>
+                        <Line color="red" x={{ values: [1, 2, 3, 4] }}
+                            y={{ values: [10, 20, 30, 40] }}></Line>
+                    </Chart>
+                }
             </div>
             <div className="chart-footer">
 

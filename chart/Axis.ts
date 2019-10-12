@@ -18,7 +18,7 @@ export interface ScaleBuild {
 
 export interface AxisProps extends InjectedAxisProps {
     position: AxisPosition;
-    label: string;
+    label?: string;
     valueSource: rd3.ValueSource;
     name?: string;
     showGridLines?: boolean;
@@ -28,22 +28,17 @@ export interface InjectedAxisProps extends rd3.InjectedChartProps {
     dispatchAxesAction?: (action: any) => void;
 }
 
-export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps): { chart: rd3.ChartDimension; data: Datum[], dispatchAxesAction: (action: any) => void } {
-    const { chart, data, dispatchAxesAction } = injectedProps;
+export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps): { chart: rd3.ChartDimension; dispatchAxesAction: (action: any) => void } {
+    const { chart, dispatchAxesAction } = injectedProps;
     if (chart === undefined || chart === null) {
         throw new Error("Injected chart property is empty")
-    }
-
-
-    if (data === undefined || data === null) {
-        throw new Error("Injected data property is empty")
     }
 
     if (dispatchAxesAction === undefined || dispatchAxesAction === null) {
         throw new Error("Injected dispatchAxesAction property is empty")
     }
 
-    return { chart, data, dispatchAxesAction };
+    return { chart, dispatchAxesAction };
 }
 
 export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.ChartDimension) {
@@ -51,24 +46,24 @@ export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.C
     if (position === AxisPosition.Bottom) {
         const start = margin;
         const end = margin + width;
-        return { translation: `translate(0,${height + margin})`, generator: axisBottom, start, end };
+        return { translation: `translate(0,${height + margin})`, generator: axisBottom, start, end, perpendicularWidth: height };
     }
 
     if (position === AxisPosition.Left) {
         const start = height + margin;
         const end = margin;
-        return { translation: `translate(${margin},0)`, generator: axisLeft, start, end, height, width, margin };
+        return { translation: `translate(${margin},0)`, generator: axisLeft, start, end, perpendicularWidth: -width };
     }
 
     if (position === AxisPosition.Right) {
         const start = height + margin;
         const end = margin;
-        return { translation: `translate(${margin + width},0)`, generator: axisRight, start, end };
+        return { translation: `translate(${margin + width},0)`, generator: axisRight, start, end, perpendicularWidth: width };
     }
 
     const start = margin;
     const end = margin;
-    return { translation: `translate(0,0)`, generator: axisTop, start, end }
+    return { translation: `translate(0,0)`, generator: axisTop, start, end, perpendicularWidth: height }
 }
 
 function isDate(value: string | number | Date): boolean {
@@ -127,3 +122,4 @@ export function getScale<T extends ValueType>(
         .domain(range as [T, T])
         .range([start, end]);
 }
+

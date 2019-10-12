@@ -6,11 +6,11 @@ import './Axis.css';
 const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
 
     const { position, valueSource, chart, data, dispatchAxesAction, showGridLines } = props;
-    const injected = getValidatedInjectedAxisProps({ chart, data, dispatchAxesAction });
+    const injected = getValidatedInjectedAxisProps({ chart, dispatchAxesAction });
     const axisRef = React.useRef(null);
     const axisGridlinesRef = React.useRef(null);
-    const { translation, generator, start, end, height, width, margin } = getAxisPositionalProperties(position, injected.chart);
-    const values = getValues(valueSource, injected.data);
+    const { translation, generator, start, end, perpendicularWidth } = getAxisPositionalProperties(position, injected.chart);
+    const values = getValues(valueSource, data);
     const dataType = getValueTypeName(values[0]);
     const range = extent(values);
     const scale = getScale(dataType, range, start, end)
@@ -22,7 +22,11 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
         injected.dispatchAxesAction({ type: 'add', payload: { type: 'numberAxis', position, scaleBuild: { position, dataType, range, valueSource }, scale } });
         select(axisRef.current).call(axisGenerator);
         if (showGridLines) {
-            const gridAxisGenerator = axisGridLineGenerator.ticks("10").tickFormat("").tickSize(-width);
+            const gridAxisGenerator = axisGridLineGenerator
+                .tickValues(axisGenerator.scale().ticks().slice(1))
+                .tickFormat("")
+                .tickSize(perpendicularWidth)
+                .tickSizeOuter(0);
             select(axisGridlinesRef.current).call(axisGridLineGenerator);
         }
 
@@ -30,8 +34,8 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
 
     return (
         <>
-            <g ref={axisRef} transform={translation} />
             <g className="gridlines" ref={axisGridlinesRef} transform={translation} />
+            <g ref={axisRef} transform={translation} />
         </>
     );
 }

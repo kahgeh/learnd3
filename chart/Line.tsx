@@ -10,11 +10,15 @@ function getLinePath<T extends ValueType>(
     x: T[],
     y: T[],
     xScale: any,
-    yScale: any) {
-    const lineGenerator = line();
+    yScale: any,
+    curve?: any) {
+    let lineGenerator = line();
     lineGenerator.x(d => xScale(d[0]));
     lineGenerator.y(d => yScale(d[1]));
 
+    if (curve) {
+        lineGenerator = lineGenerator.curve(curve);
+    }
     return lineGenerator(x.map((xi, i) => [xi, y[i]])) as string;
 }
 
@@ -27,6 +31,7 @@ interface LineProps extends rd3.InjectedChartProps {
     name?: string;
     pointVisual?: PointVisual;
     chartAxes?: ChartAxis[];
+    curve?: any;
     dispatchSeriesAction?: (action: any) => void;
 }
 
@@ -61,9 +66,8 @@ function calculateScale<T extends ValueType>(
     return getScale(dataType, range, start, end);
 }
 
-function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSource: rd3.ValueSource, chartAxes?: ChartAxis[]): ValueBuild {
-    const validated = getValidatedInjectedProps({ chart, data });
-    const values = getValues(valueSource, validated.data);
+function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]): ValueBuild {
+    const values = getValues(valueSource, data);
     const dataType = getValueTypeName(values[0]);
     const range = extent(values) as [ValueType, ValueType];
     if (chartAxes === null || chartAxes === undefined) {
@@ -88,10 +92,13 @@ function getLineScale(chart: any, data: any, positions: AxisPosition[], valueSou
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
 
-    const { color, x, y, chart, data, pointVisual, chartAxes, index, visible } = props;
-    const xBuild = getLineScale(chart, data, [AxisPosition.Bottom], x, chartAxes);
-    const yBuild = getLineScale(chart, data, [AxisPosition.Left, AxisPosition.Right], y, chartAxes);
-    const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
+    const { color, x, y, chart, data, pointVisual, chartAxes, index, visible, curve } = props;
+    if (!chart) {
+        throw new Error("Injected chart property is empty")
+    }
+    const xBuild = getLineScale(chart, [AxisPosition.Bottom], x, data, chartAxes);
+    const yBuild = getLineScale(chart, [AxisPosition.Left, AxisPosition.Right], y, data, chartAxes);
+    const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale, curve)
     const seriesName = getSeriesName(props);
     const dispatchSeriesAction = getDispatchSeriesAction(props);
     const points = mapXYtoPoints(xBuild, yBuild, pointVisual);

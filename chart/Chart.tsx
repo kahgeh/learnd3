@@ -11,7 +11,7 @@ interface ChartProps {
     width: number;
     height: number;
     margin: number;
-    data: Datum[];
+    data?: Datum[];
     axes?: JSX.Element[];
 }
 
@@ -121,20 +121,6 @@ function getArray(obj: any) {
         return obj;
     }
     return (Array.isArray(obj)) ? obj : [obj];
-}
-
-export function getValidatedInjectedProps(injectedProps: rd3.InjectedChartProps): { chart: rd3.ChartDimension; data: Datum[] } {
-    const { chart, data } = injectedProps;
-    if (chart === undefined || chart === null) {
-        throw new Error("Injected chart property is empty")
-    }
-
-
-    if (data === undefined || data === null) {
-        throw new Error("Injected data property is empty")
-    }
-
-    return { chart, data };
 }
 
 const Chart: React.FunctionComponent<ChartProps> = (props) => {
