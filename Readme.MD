@@ -27,22 +27,22 @@ and this should give me a 45 degrees line over an imagnary horizontal axis.
 
 Next I'd probably want to throw in axes to provide some visual context, may be by doing this 
 
-<div style="display: flex;align-items: center;justify-content: space-evenly;">
-<pre><code>&lt;Chart width={640} height={480} margin={50}
-    axes={[
-        &lt;NumberAxis
-            position={AxisPosition.Left}
-            valueSource={{ values: [0,40] }} /&gt;
-    ]}
-&gt;
-    &lt;Line x={{ values: [1, 2, 3, 4] }}
-          y={{ values: [10, 20, 30, 40] }}/&gt;
-&lt;/Chart&gt;    
-</code>
-</pre>
-<div style="box-shadow: 15px 15px 5px 0px rgba(219,219,219,1);"><img src="https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/cacd60b7259fdef3f83a1a894af4e62302e8a84c/simplelinechart.png" style="width: 250px;height: 200px;">
-</div>
-</div>
+    <Chart width={640} height={480} margin={50}
+        axes={[
+            <NumberAxis
+                position={AxisPosition.Left}
+                valueSource={{ values: [0,40] }}/>
+        ]}
+    >
+        <Line x={{ values: [1, 2, 3, 4] }}
+            y={{ values: [10, 20, 30, 40] }}/>
+    </Chart>    
+
+to get this ...
+
+<p align="center">
+<img width="250px" height="200px" src="https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/cacd60b7259fdef3f83a1a894af4e62302e8a84c/simplelinechart.png" width>
+</p>
 
 # References
 1. https://app.pluralsight.com/library/courses/d3-getting-started/table-of-contents
