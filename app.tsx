@@ -21,7 +21,7 @@ const App: React.FunctionComponent = () => {
                 Line Chart
             </div>
             <div className="chart-container">
-                {/* <Chart width={640} height={480} margin={50} data={measurements}
+                {<Chart width={640} height={480} margin={50} data={measurements}
                     axes={
                         [(<DateAxis
                             position={AxisPosition.Bottom}
@@ -39,26 +39,22 @@ const App: React.FunctionComponent = () => {
                             label="Arbitray"
                             valueSource={{ values: [0, 40] }} />)]}
                 >
-                    <Line color="green"
-                        x={{ valuesFromProperty: 'date' }}
-                        y={{ valuesFromProperty: 'value' }}
-                        pointVisual={{ generator: circle, toolTipTemplate: "value:{y}\ndate:{x}", size: { fixedSize: 5 } }}
-                        curve={curveMonotoneX} />
                     <Line color="red"
                         x={{ values: [1, 2, 3, 4] }}
                         y={{ values: [10, 20, 30, 40] }}
                         pointVisual={{ generator: rectangle, size: { fixedSize: 5 } }}
                         curve={curveStep} />
-                </Chart> */
-                    <Chart width={640} height={480} margin={50}
-                        axes={[
-                            (<NumberAxis
-                                position={AxisPosition.Left}
-                                valueSource={{ values: [0, 40] }} />)
-                        ]}>
-                        <Line color="red" x={{ values: [1, 2, 3, 4] }}
-                            y={{ values: [10, 20, 30, 40] }}></Line>
-                    </Chart>
+                    <Line color="green"
+                        x={{ valuesFromProperty: 'date' }}
+                        y={{ valuesFromProperty: 'value' }}
+                        pointVisual={{ generator: circle, toolTipTemplate: "value:{y}\ndate:{x}", size: { fixedSize: 5 } }}
+                        curve={curveMonotoneX} />
+                    <Line color="blue"
+                        x={{ values: [1, 2, 3, 4] }}
+                        y={{ values: [40, 30, 20, 10] }}
+                        pointVisual={{ generator: rectangle, size: { fixedSize: 5 } }}
+                        curve={curveStep} />
+                </Chart>
                 }
             </div>
             <div className="chart-footer">

@@ -44,6 +44,25 @@ to get this ...
 <img width="250px" height="200px" src="https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/cacd60b7259fdef3f83a1a894af4e62302e8a84c/simplelinechart.png" width>
 </p>
 
+# Learning areas ( capabilities )
+## Sufficiently covered 
+- D3 + react 
+- Line chart
+- Data
+- Smoothing function
+- Data beads 
+- Gridlines
+- Legend + interactivity
+
+<img src="https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/4f8a6bbd1aa14f93f4e73674a20377f93e6194a7/currentLineChart.png" width>
+
+
+## TBD
+- Range emphasis with power scale 
+- SVG interactivity
+- Annular chart
+
+
 # References
 1. https://app.pluralsight.com/library/courses/d3-getting-started/table-of-contents
 2. https://d3fc.io
