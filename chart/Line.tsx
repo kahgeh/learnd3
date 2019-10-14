@@ -92,7 +92,7 @@ function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.Va
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
 
-    const { color, x, y, chart, data, pointVisual, chartAxes, index, visible, curve } = props;
+    const { color, x, y, chart, data, pointVisual, chartAxes, index, visible, curve, exponent } = props;
     if (!chart) {
         throw new Error("Injected chart property is empty")
     }

@@ -6,6 +6,7 @@ import Legend from './Legend';
 import { ValueType } from '..';
 import { Point, PointVisual, renderToolTip } from './PointVisual';
 import { format } from 'd3';
+import PowerScaleSlider from './PowerScaleSlider';
 
 interface ChartProps {
     width: number;
@@ -56,7 +57,7 @@ export function mapXYtoPoints(x: ValueBuild, y: ValueBuild, pointVisual?: PointV
 function axesReducer(state, action) {
     switch (action.type) {
         case 'add':
-            return [...state, action.payload];
+            return [...(state.filter((axis: any) => axis.id != action.payload.id)), action.payload];
         default:
             throw new Error(`unexpected action ${action.type}`);
     }
@@ -116,6 +117,39 @@ function seriesReducer(state: rd3.Series[], action: SeriesAction) {
     }
 }
 
+interface ContextMenuState {
+    visibility: boolean;
+    generators?: ((index: number) => JSX.Element)[];
+}
+
+enum ContextMenuActionNames {
+    show = 'show',
+    hide = 'hide'
+}
+
+interface ContextMenuActions {
+    type: ContextMenuActionNames;
+    payload: ContextMenuState;
+}
+
+function contextMenuReducer(state: ContextMenuState, action: ContextMenuActions) {
+    switch (action.type) {
+        case ContextMenuActionNames.show:
+            return { visibility: true, ...action.payload };
+        default:
+            throw new Error(`unexpected action ${action.type}`);
+    }
+}
+
+function exponentReducer(state: any, action: any) {
+    switch (action.type) {
+        case 'update':
+            return action.payload;
+        default:
+            throw new Error(`unexpected action ${action.type}`);
+    }
+}
+
 function getArray(obj: any) {
     if (obj === null || obj == undefined) {
         return obj;
@@ -128,6 +162,8 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const { width, height, margin, data, axes } = props;
     const [chartAxes, dispatchAxesAction] = React.useReducer(axesReducer, []);
     const [chartSeries, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
+    const [contextMenu, dispatchContextMenuAction] = React.useReducer(contextMenuReducer, { visibility: false });
+    const [exponent, dispatchExponent] = React.useReducer(exponentReducer, 1);
 
     return (<div className="chart">
         <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
@@ -142,7 +178,8 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                         index: i,
                         chartAxes,
                         visible: getSeriesVisibity(i, chartSeries),
-                        dispatchSeriesAction
+                        dispatchSeriesAction,
+                        exponent
                     });
                 }) : null
             }
@@ -150,7 +187,7 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                 {
                     axes ? axes.map((axis, i) => {
                         const originalProps = axis.props;
-                        return React.cloneElement(axis, { ...originalProps, key: i, chart: { height, width, margin }, data, dispatchAxesAction });
+                        return React.cloneElement(axis, { ...originalProps, key: i, index: i, chart: { height, width, margin }, data, dispatchAxesAction, dispatchContextMenuAction, exponent });
                     }) : null
                 }
             </g>
@@ -159,6 +196,11 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
             chartSeries={chartSeries}
             dispatchSeriesAction={dispatchSeriesAction}
         />
+        {
+            contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: 100, top: 100 }}>
+                <PowerScaleSlider value={exponent} dispatchExponent={dispatchExponent} />
+            </div>) : null
+        }
     </div>);
 }
 

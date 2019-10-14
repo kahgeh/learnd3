@@ -56,9 +56,9 @@ const App: React.FunctionComponent = () => {
                         curve={curveStep} />
                 </Chart>
                 }
+                bottom range emphsis
             </div>
             <div className="chart-footer">
-
             </div>
         </div>
     </>);

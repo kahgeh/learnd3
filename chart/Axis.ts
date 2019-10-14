@@ -1,4 +1,4 @@
-import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight } from "d3";
+import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight, scalePow } from "d3";
 import { rd3 } from ".";
 import { ValueType } from "..";
 import { ValueTypeName } from "./Chart";
@@ -25,11 +25,14 @@ export interface AxisProps extends InjectedAxisProps {
 }
 
 export interface InjectedAxisProps extends rd3.InjectedChartProps {
+    index: number;
     dispatchAxesAction?: (action: any) => void;
+    dispatchContextMenuAction?: (action: any) => void;
+    exponent?: number;
 }
 
-export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps): { chart: rd3.ChartDimension; dispatchAxesAction: (action: any) => void } {
-    const { chart, dispatchAxesAction } = injectedProps;
+export function getInjectedAxisProps(props: any) {
+    const { chart, dispatchAxesAction, dispatchContextMenuAction, exponent, index } = props;
     if (chart === undefined || chart === null) {
         throw new Error("Injected chart property is empty")
     }
@@ -38,7 +41,11 @@ export function getValidatedInjectedAxisProps(injectedProps: InjectedAxisProps):
         throw new Error("Injected dispatchAxesAction property is empty")
     }
 
-    return { chart, dispatchAxesAction };
+    if (dispatchContextMenuAction === undefined || dispatchContextMenuAction === null) {
+        throw new Error("Injected dispatchContextMenuAction property is empty")
+    }
+
+    return { chart, dispatchAxesAction, dispatchContextMenuAction, exponent, index };
 }
 
 export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.ChartDimension) {
@@ -110,12 +117,20 @@ export function getScale<T extends ValueType>(
     type: string,
     range: [T | undefined, T | undefined],
     start: number,
-    end: number) {
+    end: number,
+    exponent?: number) {
 
     if (type == "Date") {
         return scaleTime()
             .domain(range as [T, T])
             .range([start, end]);
+    }
+
+    if (exponent) {
+        return scalePow()
+            .domain(range as [T, T])
+            .range([start, end])
+            .exponent(exponent);
     }
 
     return scaleLinear()

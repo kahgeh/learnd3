@@ -9,6 +9,7 @@ declare module rd3 {
         chart?: ChartDimension;
         data?: Datum[];
         dispatchAxesAction?: (action: any) => void;
+        exponent?: number;
     }
     interface ChartDimension {
         width: number;
