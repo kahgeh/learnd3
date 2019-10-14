@@ -59,6 +59,7 @@ to get this ...
 
 ## TBD
 - Range emphasis with power scale 
+    - right clicking on the axis, should bring up the power scale exponent value slider
 - SVG interactivity
 - Annular chart
 
