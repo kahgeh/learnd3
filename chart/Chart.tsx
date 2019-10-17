@@ -157,8 +157,9 @@ function getArray(obj: any) {
     return (Array.isArray(obj)) ? obj : [obj];
 }
 
-const Chart: React.FunctionComponent<ChartProps> = (props) => {
+export const ChartAxesContext = React.createContext<ChartAxis[]>([]);
 
+const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const { width, height, margin, data, axes } = props;
     const [chartAxes, dispatchAxesAction] = React.useReducer(axesReducer, []);
     const [chartSeries, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
@@ -166,41 +167,42 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const [exponent, dispatchExponent] = React.useReducer(exponentReducer, 1);
 
     return (<div className="chart">
-        <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
-            {
-                props.children ? getArray(props.children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
-                    const originalProps = child.props;
-                    return React.cloneElement(child, {
-                        ...originalProps,
-                        key: i,
-                        chart: { height, width, margin },
-                        data,
-                        index: i,
-                        chartAxes,
-                        visible: getSeriesVisibity(i, chartSeries),
-                        dispatchSeriesAction,
-                        exponent
-                    });
-                }) : null
-            }
-            <g>
+        <ChartAxesContext.Provider value={chartAxes}>
+            <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
                 {
-                    axes ? axes.map((axis, i) => {
-                        const originalProps = axis.props;
-                        return React.cloneElement(axis, { ...originalProps, key: i, index: i, chart: { height, width, margin }, data, dispatchAxesAction, dispatchContextMenuAction, exponent });
+                    props.children ? getArray(props.children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
+                        const originalProps = child.props;
+                        return React.cloneElement(child, {
+                            ...originalProps,
+                            key: i,
+                            chart: { height, width, margin },
+                            data,
+                            index: i,
+                            visible: getSeriesVisibity(i, chartSeries),
+                            dispatchSeriesAction,
+                            exponent
+                        });
                     }) : null
                 }
-            </g>
-        </svg>
-        <Legend
-            chartSeries={chartSeries}
-            dispatchSeriesAction={dispatchSeriesAction}
-        />
-        {
-            contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: 100, top: 100 }}>
-                <PowerScaleSlider value={exponent} dispatchExponent={dispatchExponent} />
-            </div>) : null
-        }
+                <g>
+                    {
+                        axes ? axes.map((axis, i) => {
+                            const originalProps = axis.props;
+                            return React.cloneElement(axis, { ...originalProps, key: i, index: i, chart: { height, width, margin }, data, dispatchAxesAction, dispatchContextMenuAction, exponent });
+                        }) : null
+                    }
+                </g>
+            </svg>
+            <Legend
+                chartSeries={chartSeries}
+                dispatchSeriesAction={dispatchSeriesAction}
+            />
+            {
+                contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: 100, top: 100 }}>
+                    <PowerScaleSlider value={exponent} dispatchExponent={dispatchExponent} />
+                </div>) : null
+            }
+        </ChartAxesContext.Provider>
     </div>);
 }
 
