@@ -1,12 +1,11 @@
 import * as React from 'react';
 import './Legend.css';
 import { rd3 } from '.';
-import { SeriesAction, SeriesActionNames, getSeriesName } from './Chart';
+import { SeriesAction, SeriesActionNames, getSeriesName, chartContext } from './Chart';
 
 
 interface LegendProps {
     chartSeries: rd3.Series[];
-    dispatchSeriesAction: React.Dispatch<SeriesAction>;
 }
 
 function LegendSeries(series: rd3.Series,
@@ -35,7 +34,9 @@ function LegendSeries(series: rd3.Series,
 }
 
 const Legend: React.FunctionComponent<LegendProps> = (props) => {
-    const { chartSeries, dispatchSeriesAction } = props;
+    const { dispatchSeriesAction } = React.useContext(chartContext);
+
+    const { chartSeries } = props;
     if (!chartSeries) {
         return null;
     }

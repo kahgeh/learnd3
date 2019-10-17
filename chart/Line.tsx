@@ -2,7 +2,7 @@ import * as React from 'react';
 import { line, extent, values } from 'd3';
 import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
 import { rd3 } from '.';
-import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility, mapXYtoPoints, ValueBuild, ChartAxesContext } from './Chart';
+import { ChartAxis, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility, mapXYtoPoints, ValueBuild, chartContext } from './Chart';
 import { ValueType } from '..';
 import ChartAxesFinder from './ChartAxesFinder';
 import { PointVisual, generate } from './PointVisual';
@@ -48,14 +48,6 @@ function getSeriesName(props: LineProps) {
     return `series-${index}`
 }
 
-function getDispatchSeriesAction(props: LineProps) {
-    const { dispatchSeriesAction } = props;
-    if (!dispatchSeriesAction) {
-        return (action: SeriesAction) => { console.log('WARNING: empty dispatch being called') };
-    }
-    return dispatchSeriesAction;
-}
-
 function calculateScale<T extends ValueType>(
     chart: any,
     range: [T, T],
@@ -90,18 +82,13 @@ function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.Va
 }
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
+    const { axes, dimensions, dispatchSeriesAction } = React.useContext(chartContext);
 
-    const { color, x, y, chart, data, pointVisual, index, visible, curve, exponent } = props;
-    if (!chart) {
-        throw new Error("Injected chart property is empty")
-    }
-    const chartAxes = React.useContext(ChartAxesContext);
-
-    const xBuild = getLineScale(chart, [AxisPosition.Bottom], x, data, chartAxes);
-    const yBuild = getLineScale(chart, [AxisPosition.Left, AxisPosition.Right], y, data, chartAxes);
+    const { color, x, y, data, pointVisual, index, visible, curve, exponent } = props;
+    const xBuild = getLineScale(dimensions, [AxisPosition.Bottom], x, data, axes);
+    const yBuild = getLineScale(dimensions, [AxisPosition.Left, AxisPosition.Right], y, data, axes);
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale, curve)
     const seriesName = getSeriesName(props);
-    const dispatchSeriesAction = getDispatchSeriesAction(props);
     const points = mapXYtoPoints(xBuild, yBuild, pointVisual);
 
     React.useEffect(() => {

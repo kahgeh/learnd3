@@ -2,6 +2,7 @@ import * as React from 'react';
 import { select, timeFormat, extent } from 'd3';
 import { getAxisPositionalProperties, AxisProps, getScale, getInjectedAxisProps, getValueTypeName, getValues } from './Axis';
 import defaults from '../defaults';
+import { chartContext } from './Chart';
 interface DateAxisProps {
     format?: string;
 }
@@ -14,10 +15,12 @@ function getFormattedAxisGenerator(formatSpecification: string, generator: any, 
 }
 
 const DateAxis: React.FunctionComponent<AxisProps & DateAxisProps> = (props) => {
+    const { dispatchAxesAction, dimensions } = React.useContext(chartContext);
+
     const { position, valueSource, data, format } = props;
-    const { chart, dispatchAxesAction, index } = getInjectedAxisProps(props);
+    const { index } = getInjectedAxisProps(props);
     const axisRef = React.useRef(null);
-    const { translation, generator: axisGenerator, start, end } = getAxisPositionalProperties(position, chart);
+    const { translation, generator: axisGenerator, start, end } = getAxisPositionalProperties(position, dimensions);
     const values = getValues(valueSource, data);
     const dataType = getValueTypeName(values[0]);
     const range = extent(values);
