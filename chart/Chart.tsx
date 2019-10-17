@@ -28,10 +28,12 @@ export enum ValueTypeName {
 }
 
 export interface ChartAxis {
+    id: string;
     scaleBuild: ScaleBuild;
     scale: any;
     position: AxisPosition;
     type: string;
+    exponent: number;
 }
 
 function getToolTip(value: any, pointVisual?: PointVisual) {
@@ -54,12 +56,29 @@ export function mapXYtoPoints(x: ValueBuild, y: ValueBuild, pointVisual?: PointV
     });
 }
 
-function axesReducer(state, action) {
-    switch (action.type) {
-        case 'add':
-            return [...(state.filter((axis: any) => axis.id != action.payload.id)), action.payload];
+export enum AxisActionNames {
+    add = 'add',
+    updateExponent = 'updateExponent'
+}
+
+export type AxisAction = {
+    type: AxisActionNames;
+    payload: any;
+}
+
+function axesReducer(state: ChartAxis[], action: AxisAction) {
+    const { type, payload } = action;
+    switch (type) {
+        case AxisActionNames.add:
+            return [...(state.filter((axis: any) => axis.id != payload.id)), payload];
+        case AxisActionNames.updateExponent:
+            const axis = state.filter((axis: any) => axis.id == payload.id)[0];
+            console.log(`updating exponent value for axis ${axis.id} with new value ${payload.exponent}`);
+            const updatedAxis = { ...axis, exponent: payload.exponent };
+            console.log(updatedAxis);
+            return [...(state.filter((axis: any) => axis.id != payload.id)), updatedAxis]
         default:
-            throw new Error(`unexpected action ${action.type}`);
+            throw new Error(`unexpected action ${type}`);
     }
 }
 
@@ -107,11 +126,12 @@ function getSeriesVisibity(index: number, chartSeries?: rd3.Series[]) {
 }
 
 function seriesReducer(state: rd3.Series[], action: SeriesAction) {
-    switch (action.type) {
+    const { type, payload } = action;
+    switch (type) {
         case SeriesActionNames.add:
-            return [...state, action.payload];
+            return [...state, payload];
         case SeriesActionNames.toggleVisibility:
-            return disableSeries(state, action.payload.index);
+            return disableSeries(state, payload.index);
         default:
             throw new Error(`unexpected action ${action.type}`);
     }
@@ -119,7 +139,8 @@ function seriesReducer(state: rd3.Series[], action: SeriesAction) {
 
 interface ContextMenuState {
     visibility: boolean;
-    generators?: ((index: number) => JSX.Element)[];
+    source: any;
+    menuItems: JSX.Element[];
 }
 
 enum ContextMenuActionNames {
@@ -127,24 +148,15 @@ enum ContextMenuActionNames {
     hide = 'hide'
 }
 
-interface ContextMenuActions {
+interface ContextMenuAction {
     type: ContextMenuActionNames;
     payload: ContextMenuState;
 }
 
-function contextMenuReducer(state: ContextMenuState, action: ContextMenuActions) {
+function contextMenuReducer(state: ContextMenuState, action: ContextMenuAction) {
     switch (action.type) {
         case ContextMenuActionNames.show:
             return { visibility: true, ...action.payload };
-        default:
-            throw new Error(`unexpected action ${action.type}`);
-    }
-}
-
-function exponentReducer(state: any, action: any) {
-    switch (action.type) {
-        case 'update':
-            return action.payload;
         default:
             throw new Error(`unexpected action ${action.type}`);
     }
@@ -158,20 +170,41 @@ function getArray(obj: any) {
 }
 
 interface ChartContext {
+    dimensions: ChartDimensions;
     axes: ChartAxis[];
+    series: rd3.Series[];
+    dispatchSeriesAction: (action: SeriesAction) => void;
+    dispatchAxesAction: (action: AxisAction) => void;
+    dispatchContextMenuAction: (action: ContextMenuAction) => void;
+    data?: Datum[];
 }
 
-export const chartContext = React.createContext<ChartContext>({ axes: [] });
+interface ChartDimensions {
+    width: number;
+    height: number;
+    margin: number;
+}
+
+export const chartContext = React.createContext<ChartContext>({ axes: [], series: [] });
+const emptyContextMenu = { visibility: false, source: null, menuItems: [] };
+export const contextMenuContext = React.createContext<ContextMenuState>(emptyContextMenu)
 
 const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const { width, height, margin, data, axes } = props;
     const [chartAxes, dispatchAxesAction] = React.useReducer(axesReducer, []);
     const [chartSeries, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
-    const [contextMenu, dispatchContextMenuAction] = React.useReducer(contextMenuReducer, { visibility: false });
-    const [exponent, dispatchExponent] = React.useReducer(exponentReducer, 1);
+    const [contextMenu, dispatchContextMenuAction] = React.useReducer(contextMenuReducer, emptyContextMenu);
 
     return (<div className="chart">
-        <chartContext.Provider value={{ axes: chartAxes }}>
+        <chartContext.Provider value={{
+            dimensions: { width, height, margin },
+            axes: chartAxes,
+            series: chartSeries,
+            data,
+            dispatchAxesAction,
+            dispatchSeriesAction,
+            dispatchContextMenuAction,
+        }}>
             <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
                 {
                     props.children ? getArray(props.children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
@@ -179,12 +212,9 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                         return React.cloneElement(child, {
                             ...originalProps,
                             key: i,
-                            chart: { height, width, margin },
                             data,
                             index: i,
-                            visible: getSeriesVisibity(i, chartSeries),
-                            dispatchSeriesAction,
-                            exponent
+                            visible: getSeriesVisibity(i, chartSeries)
                         });
                     }) : null
                 }
@@ -192,18 +222,17 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                     {
                         axes ? axes.map((axis, i) => {
                             const originalProps = axis.props;
-                            return React.cloneElement(axis, { ...originalProps, key: i, index: i, chart: { height, width, margin }, data, dispatchAxesAction, dispatchContextMenuAction, exponent });
+                            return React.cloneElement(axis, { ...originalProps, key: i, index: i });
                         }) : null
                     }
                 </g>
             </svg>
             <Legend
                 chartSeries={chartSeries}
-                dispatchSeriesAction={dispatchSeriesAction}
             />
             {
                 contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: 100, top: 100 }}>
-                    <PowerScaleSlider value={exponent} dispatchExponent={dispatchExponent} />
+                    {contextMenu.menuItems}
                 </div>) : null
             }
         </chartContext.Provider>

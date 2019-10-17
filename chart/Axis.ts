@@ -1,7 +1,7 @@
 import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight, scalePow } from "d3";
 import { rd3 } from ".";
 import { ValueType } from "..";
-import { ValueTypeName } from "./Chart";
+import { ValueTypeName, ChartAxis } from "./Chart";
 
 export enum AxisPosition {
     Left = "Left",
@@ -26,26 +26,12 @@ export interface AxisProps extends InjectedAxisProps {
 
 export interface InjectedAxisProps extends rd3.InjectedChartProps {
     index: number;
-    dispatchAxesAction?: (action: any) => void;
-    dispatchContextMenuAction?: (action: any) => void;
-    exponent?: number;
 }
 
 export function getInjectedAxisProps(props: any) {
-    const { chart, dispatchAxesAction, dispatchContextMenuAction, exponent, index } = props;
-    if (chart === undefined || chart === null) {
-        throw new Error("Injected chart property is empty")
-    }
+    const { index } = props;
 
-    if (dispatchAxesAction === undefined || dispatchAxesAction === null) {
-        throw new Error("Injected dispatchAxesAction property is empty")
-    }
-
-    if (dispatchContextMenuAction === undefined || dispatchContextMenuAction === null) {
-        throw new Error("Injected dispatchContextMenuAction property is empty")
-    }
-
-    return { chart, dispatchAxesAction, dispatchContextMenuAction, exponent, index };
+    return { index };
 }
 
 export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.ChartDimension) {
