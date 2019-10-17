@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { event as currentEvent, select, extent } from 'd3';
+import d3, { event as currentEvent, select, extent } from 'd3';
 import { AxisProps, getScale, getAxisPositionalProperties, getInjectedAxisProps, getValueTypeName, getValues } from './Axis';
 import './Axis.css';
 import { chartContext, ChartAxis } from './Chart';
@@ -33,7 +33,7 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
         select(axisRef.current)
             .on("contextmenu", function (d, index) {
                 console.log(`${axisRef.current} ${d}`);
-                dispatchContextMenuAction({ type: 'show', payload: { source: axisRef.current, menuItems: [(<PowerScaleSlider key={1} axisId={id} />)] } });
+                dispatchContextMenuAction({ type: 'show', payload: { source: axisRef.current, position: { x: currentEvent.pageX, y: currentEvent.pageY }, menuItems: [(<PowerScaleSlider key={1} axisId={id} />)] } });
                 currentEvent.preventDefault();
             })
         if (showGridLines) {

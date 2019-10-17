@@ -139,6 +139,7 @@ function seriesReducer(state: rd3.Series[], action: SeriesAction) {
 
 interface ContextMenuState {
     visibility: boolean;
+    position: { x: number, y: number };
     source: any;
     menuItems: JSX.Element[];
 }
@@ -212,7 +213,6 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                         return React.cloneElement(child, {
                             ...originalProps,
                             key: i,
-                            data,
                             index: i,
                             visible: getSeriesVisibity(i, chartSeries)
                         });
@@ -231,7 +231,7 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                 chartSeries={chartSeries}
             />
             {
-                contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: 100, top: 100 }}>
+                contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: `${contextMenu.position.x}px`, top: `${contextMenu.position.y}px` }}>
                     {contextMenu.menuItems}
                 </div>) : null
             }

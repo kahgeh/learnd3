@@ -82,9 +82,9 @@ function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.Va
 }
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
-    const { axes, dimensions, dispatchSeriesAction } = React.useContext(chartContext);
+    const { axes, dimensions, data, dispatchSeriesAction } = React.useContext(chartContext);
 
-    const { color, x, y, data, pointVisual, index, visible, curve, exponent } = props;
+    const { color, x, y, pointVisual, index, visible, curve } = props;
     const xBuild = getLineScale(dimensions, [AxisPosition.Bottom], x, data, axes);
     const yBuild = getLineScale(dimensions, [AxisPosition.Left, AxisPosition.Right], y, data, axes);
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale, curve)
