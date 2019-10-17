@@ -15,17 +15,18 @@ function getFormattedAxisGenerator(formatSpecification: string, generator: any, 
 }
 
 const DateAxis: React.FunctionComponent<AxisProps & DateAxisProps> = (props) => {
-    const { dispatchAxesAction, dimensions } = React.useContext(chartContext);
+    const { dispatchAxesAction, dimensions, data } = React.useContext(chartContext);
 
-    const { position, valueSource, data, format } = props;
+    const { position, valueSource, format } = props;
     const { index } = getInjectedAxisProps(props);
+    const id = `${position}-${index}`;
+
     const axisRef = React.useRef(null);
     const { translation, generator: axisGenerator, start, end } = getAxisPositionalProperties(position, dimensions);
     const values = getValues(valueSource, data);
     const dataType = getValueTypeName(values[0]);
     const range = extent(values);
     const scale = getScale(dataType, range, start, end);
-    const id = `${position}-${index}`;
     let effectiveFormat = (format === null || format === undefined) ?
         defaults.DateAxis.format : format;
 
