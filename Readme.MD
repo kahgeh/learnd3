@@ -66,4 +66,5 @@ to get this ...
 
 # References
 1. https://app.pluralsight.com/library/courses/d3-getting-started/table-of-contents
-2. https://d3fc.io
+2. https://bl.ocks.org/
+3. https://d3fc.io
