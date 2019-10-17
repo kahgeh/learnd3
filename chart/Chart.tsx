@@ -157,7 +157,11 @@ function getArray(obj: any) {
     return (Array.isArray(obj)) ? obj : [obj];
 }
 
-export const ChartAxesContext = React.createContext<ChartAxis[]>([]);
+interface ChartContext {
+    axes: ChartAxis[];
+}
+
+export const chartContext = React.createContext<ChartContext>({ axes: [] });
 
 const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const { width, height, margin, data, axes } = props;
@@ -167,7 +171,7 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const [exponent, dispatchExponent] = React.useReducer(exponentReducer, 1);
 
     return (<div className="chart">
-        <ChartAxesContext.Provider value={chartAxes}>
+        <chartContext.Provider value={{ axes: chartAxes }}>
             <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
                 {
                     props.children ? getArray(props.children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
@@ -202,7 +206,7 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                     <PowerScaleSlider value={exponent} dispatchExponent={dispatchExponent} />
                 </div>) : null
             }
-        </ChartAxesContext.Provider>
+        </chartContext.Provider>
     </div>);
 }
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { line, extent, values } from 'd3';
 import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
 import { rd3 } from '.';
-import { ChartAxis, getValidatedInjectedProps, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility, mapXYtoPoints, ValueBuild, ChartAxesContext } from './Chart';
+import { ChartAxis, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility, mapXYtoPoints, ValueBuild, chartContext } from './Chart';
 import { ValueType } from '..';
 import ChartAxesFinder from './ChartAxesFinder';
 import { PointVisual, generate } from './PointVisual';
@@ -95,10 +95,10 @@ const Line: React.FunctionComponent<LineProps> = (props) => {
     if (!chart) {
         throw new Error("Injected chart property is empty")
     }
-    const chartAxes = React.useContext(ChartAxesContext);
+    const { axes } = React.useContext(chartContext);
 
-    const xBuild = getLineScale(chart, [AxisPosition.Bottom], x, data, chartAxes);
-    const yBuild = getLineScale(chart, [AxisPosition.Left, AxisPosition.Right], y, data, chartAxes);
+    const xBuild = getLineScale(chart, [AxisPosition.Bottom], x, data, axes);
+    const yBuild = getLineScale(chart, [AxisPosition.Left, AxisPosition.Right], y, data, axes);
     const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale, curve)
     const seriesName = getSeriesName(props);
     const dispatchSeriesAction = getDispatchSeriesAction(props);
