@@ -31,7 +31,6 @@ interface LineProps extends rd3.InjectedChartProps {
     name?: string;
     pointVisual?: PointVisual;
     curve?: any;
-    dispatchSeriesAction?: (action: any) => void;
 }
 
 function getSeriesName(props: LineProps) {
