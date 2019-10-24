@@ -1,5 +1,4 @@
 .chart{
-    position: relative;
     display: flex;
     background-color: white;
     border: 0.2em solid lightslategray;
@@ -12,7 +11,4 @@
 
 .chart-contextmenu {
     position: absolute;
-
-    background-color: white;
-    border: 1px solid lightgray;
 }

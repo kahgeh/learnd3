@@ -139,6 +139,7 @@ function seriesReducer(state: rd3.Series[], action: SeriesAction) {
 
 interface ContextMenuState {
     visibility: boolean;
+    position: { x: number, y: number };
     source: any;
     menuItems: JSX.Element[];
 }
@@ -157,6 +158,8 @@ function contextMenuReducer(state: ContextMenuState, action: ContextMenuAction) 
     switch (action.type) {
         case ContextMenuActionNames.show:
             return { visibility: true, ...action.payload };
+        case ContextMenuActionNames.hide:
+            return { visibility: false };
         default:
             throw new Error(`unexpected action ${action.type}`);
     }
@@ -186,7 +189,7 @@ interface ChartDimensions {
 }
 
 export const chartContext = React.createContext<ChartContext>({ axes: [], series: [] });
-const emptyContextMenu = { visibility: false, source: null, menuItems: [] };
+const emptyContextMenu = { visibility: false, source: null, menuItems: [], position: { x: 0, y: 0 } };
 export const contextMenuContext = React.createContext<ContextMenuState>(emptyContextMenu)
 
 const Chart: React.FunctionComponent<ChartProps> = (props) => {
@@ -194,6 +197,17 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const [chartAxes, dispatchAxesAction] = React.useReducer(axesReducer, []);
     const [chartSeries, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
     const [contextMenu, dispatchContextMenuAction] = React.useReducer(contextMenuReducer, emptyContextMenu);
+
+    const handleEscKey = (e: KeyboardEvent) => {
+        if (e.keyCode === 27) {
+            dispatchContextMenuAction({ type: ContextMenuActionNames.hide })
+        }
+    }
+
+    React.useEffect(() => {
+        document.addEventListener('keydown', handleEscKey, false);
+        return () => document.removeEventListener('keydown', handleEscKey, false);
+    })
 
     return (<div className="chart">
         <chartContext.Provider value={{
@@ -212,7 +226,6 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                         return React.cloneElement(child, {
                             ...originalProps,
                             key: i,
-                            data,
                             index: i,
                             visible: getSeriesVisibity(i, chartSeries)
                         });
@@ -231,7 +244,7 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                 chartSeries={chartSeries}
             />
             {
-                contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: 100, top: 100 }}>
+                contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: `${contextMenu.position.x}px`, top: `${contextMenu.position.y}px` }}>
                     {contextMenu.menuItems}
                 </div>) : null
             }

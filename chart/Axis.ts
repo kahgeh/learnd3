@@ -25,12 +25,14 @@ export interface AxisProps extends InjectedAxisProps {
 }
 
 export interface InjectedAxisProps extends rd3.InjectedChartProps {
-    index: number;
+    index?: number;
 }
 
 export function getInjectedAxisProps(props: any) {
     const { index } = props;
-
+    if (index === null || index === undefined) {
+        throw new Error("Injected property index cannot be null or undefined")
+    }
     return { index };
 }
 

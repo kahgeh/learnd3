@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { chartContext, AxisActionNames, ChartAxis } from './Chart';
+import './PowerScaleSlider.css';
 
 interface PowerScaleSliderProps {
     axisId: string;
@@ -17,7 +18,7 @@ const PowerScaleSlider: React.FunctionComponent<PowerScaleSliderProps> = (props)
         dispatchAxesAction({ type: AxisActionNames.updateExponent, payload: { id: axisId, exponent: Number(value) } });
     }
     return (<>
-        <input type="range" min=".1" max="2" step="0.1" value={`${value}`} onChange={handleSliderChangeValue} />
+        <input className="vertical" type="range" min=".1" max="2" step="0.1" value={`${value}`} onChange={handleSliderChangeValue} />
     </>)
 }
 

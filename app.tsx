@@ -9,12 +9,15 @@ import { AxisPosition } from './chart/Axis';
 import Line from './chart/Line';
 import { circle, rectangle } from './chart/PointVisual';
 import { curveMonotoneX, curveStep } from 'd3';
+import Slider, { SliderPosition } from './Slider';
 
 const App: React.FunctionComponent = () => {
     const measurements = getMayRainfall().map(d => ({ date: new Date(Date.parse(d.date)), value: d.value }));
+
     return (<>
         <div className='drawer-container'>
             <div className="drawer-item">Line chart</div>
+            <Slider position={SliderPosition.Vertical} range={[0.1, 0, 10]} size={200} />
         </div>
         <div className="content-container">
             <div className="chart-title">
