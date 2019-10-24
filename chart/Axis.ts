@@ -2,6 +2,8 @@ import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop,
 import { rd3 } from ".";
 import { ValueType } from "..";
 import { ValueTypeName, ChartAxis } from "./Chart";
+import ChartAxesFinder from "./ChartAxesFinder";
+import * as d3 from 'd3';
 
 export enum AxisPosition {
     Left = "Left",
@@ -126,3 +128,63 @@ export function getScale<T extends ValueType>(
         .range([start, end]);
 }
 
+function calculateLineScale<T extends ValueType>(
+    chart: any,
+    range: [T, T],
+    dataType: ValueTypeName,
+    position: AxisPosition) {
+    const { start, end } = getAxisPositionalProperties(position, chart);
+    return getScale(dataType, range, start, end);
+}
+
+export function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]): ValueBuild {
+    const values = getValues(valueSource, data);
+    const dataType = getValueTypeName(values[0]);
+    const range = extent(values) as [ValueType, ValueType];
+    if (chartAxes === null || chartAxes === undefined) {
+        return {
+            values,
+            scale: calculateLineScale(chart, range, dataType, positions[0])
+        }
+    }
+
+    let mostNarrowRange = (new ChartAxesFinder(chartAxes))
+        .getSimilarPositionAndType(positions, dataType)
+        .withinRange(range)
+        .mostNarrowRange();
+
+    const scale = (mostNarrowRange) ? mostNarrowRange.scale : calculateLineScale(chart, range, dataType, positions[0]);
+    return {
+        values,
+        scale
+    };
+
+}
+
+function calculateBarScale<T extends ValueType>(
+    chart: any,
+    range: T[],
+    dataType: ValueTypeName,
+    position: AxisPosition) {
+    const { start, end } = getAxisPositionalProperties(position, chart);
+    return d3.scaleBand()
+        .range([start, end])
+        .padding(0.1)
+        .domain(range);
+}
+
+export function getBarScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]) {
+    const values = getValues(valueSource, data);
+    const dataType = getValueTypeName(values[0]);
+    const range = extent(values) as [ValueType, ValueType];
+    if (chartAxes === null || chartAxes === undefined) {
+        return {
+            values,
+            scale: calculateBarScale(chart, values, dataType, positions[0])
+        }
+    }
+    return {
+        values,
+        scale: calculateBarScale(chart, values, dataType, positions[0])
+    }
+}
