@@ -25,7 +25,7 @@ const DateAxis: React.FunctionComponent<AxisProps & DateAxisProps> = (props) => 
     const { translation, generator: axisGenerator, start, end } = getAxisPositionalProperties(position, dimensions);
     const values = getValues(valueSource, data);
     const dataType = getValueTypeName(values[0]);
-    const range = extent(values);
+    const range = extent(values as Date[]);
     const scale = getScale(dataType, range, start, end);
     let effectiveFormat = (format === null || format === undefined) ?
         defaults.DateAxis.format : format;

@@ -24,6 +24,7 @@ export interface ValueBuild {
 export enum ValueTypeName {
     number = 'number',
     Date = 'Date',
+    string = 'string',
     unknown = 'unknown'
 }
 

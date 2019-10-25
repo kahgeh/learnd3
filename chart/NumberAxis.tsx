@@ -22,7 +22,7 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
     const { translation, generator, start, end, perpendicularWidth } = getAxisPositionalProperties(position, dimensions);
     const values = getValues(valueSource, data);
     const dataType = getValueTypeName(values[0]);
-    const range = extent(values);
+    const range = extent(values as number[]);
     const scale = getScale(dataType, range, start, end, exponent)
     const axisGenerator = generator(scale);
     const axisGridLineGenerator = generator(scale);

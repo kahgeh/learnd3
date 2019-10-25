@@ -44,7 +44,7 @@ const App: React.FunctionComponent = () => {
                             valueSource={{ values: [0, 40] }} />)]}
                 >
                     <Bar color="beige"
-                        x={{ values: ['Jan', 'Feb', 'Mar', 'Apr'] }}
+                        x={{ values: [1, 2, 3, 4] }}
                         y={{ values: [40, 30, 20, 10] }}
                     />
                     <Line color="red"

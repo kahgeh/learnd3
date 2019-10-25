@@ -1,6 +1,6 @@
 import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight, scalePow } from "d3";
 import { rd3 } from ".";
-import { ValueType } from "..";
+import { ValueType, stringName } from "..";
 import { ValueTypeName, ChartAxis } from "./Chart";
 import ChartAxesFinder from "./ChartAxesFinder";
 import * as d3 from 'd3';
@@ -68,13 +68,16 @@ function isDate(value: string | number | Date): boolean {
     return (d instanceof Date && isFinite(d));
 }
 
-export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName {
+export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName | 'string' {
 
     if (!Number.isNaN(value as any)) {
         return ValueTypeName.number;
     }
     if (isDate(value)) {
         return ValueTypeName.Date;
+    }
+    if (typeof value == ValueTypeName.string) {
+        return ValueTypeName.string;
     }
 
     return ValueTypeName.unknown;
@@ -161,10 +164,9 @@ export function getLineScale(chart: any, positions: AxisPosition[], valueSource:
 
 }
 
-function calculateBarScale<T extends ValueType>(
+function calculateBarScale(
     chart: any,
-    range: T[],
-    dataType: ValueTypeName,
+    range: string[],
     position: AxisPosition) {
     const { start, end } = getAxisPositionalProperties(position, chart);
     return d3.scaleBand()
@@ -174,17 +176,25 @@ function calculateBarScale<T extends ValueType>(
 }
 
 export function getBarScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]) {
-    const values = getValues(valueSource, data);
+    const sourceValues = getValues(valueSource, data);
+    let values: string[] = [];
     const dataType = getValueTypeName(values[0]);
-    const range = extent(values) as [ValueType, ValueType];
+    if (dataType == ValueTypeName.string) {
+        values = (sourceValues as unknown) as string[];
+    } else if (dataType == ValueTypeName.Date) {
+        values = sourceValues.map((v) => new Date(v).toISOString().substring(0, 10));
+    } else {
+        values = sourceValues.map((v) => v.toString())
+    }
+
     if (chartAxes === null || chartAxes === undefined) {
         return {
             values,
-            scale: calculateBarScale(chart, values, dataType, positions[0])
+            scale: calculateBarScale(chart, values, positions[0])
         }
     }
     return {
         values,
-        scale: calculateBarScale(chart, values, dataType, positions[0])
+        scale: calculateBarScale(chart, values, positions[0])
     }
 }
