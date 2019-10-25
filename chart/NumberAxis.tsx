@@ -1,6 +1,6 @@
 import * as React from 'react';
 import d3, { event as currentEvent, select, extent } from 'd3';
-import { AxisProps, getScale, getAxisPositionalProperties, getInjectedAxisProps, getValueTypeName, getValues } from './Axis';
+import { AxisProps, getScale, getAxisPositionalProperties, getInjectedAxisProps, getValueList } from './Axis';
 import './Axis.css';
 import { chartContext, ChartAxis } from './Chart';
 import PowerScaleSlider from './PowerScaleSlider';
@@ -20,8 +20,8 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
     const axisRef = React.useRef(null);
     const axisGridlinesRef = React.useRef(null);
     const { translation, generator, start, end, perpendicularWidth } = getAxisPositionalProperties(position, dimensions);
-    const values = getValues(valueSource, data);
-    const dataType = getValueTypeName(values[0]);
+    const { values, typeName: dataType } = getValueList(valueSource, data);
+
     const range = extent(values as number[]);
     const scale = getScale(dataType, range, start, end, exponent)
     const axisGenerator = generator(scale);

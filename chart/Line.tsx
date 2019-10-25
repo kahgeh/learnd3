@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { line } from 'd3';
-import { AxisPosition, getLineScale } from './Axis';
+import { AxisPosition, getContinuousValuesScale, getValueList } from './Axis';
 import { rd3 } from '.';
 import { SeriesActionNames, getVisibility, mapXYtoPoints, chartContext } from './Chart';
 import { ValueType } from '..';
@@ -52,9 +52,15 @@ const Line: React.FunctionComponent<LineProps> = (props) => {
     const { axes, dimensions, data, dispatchSeriesAction } = React.useContext(chartContext);
 
     const { color, x, y, pointVisual, index, visible, curve } = props;
-    const xBuild = getLineScale(dimensions, [AxisPosition.Bottom], x, data, axes);
-    const yBuild = getLineScale(dimensions, [AxisPosition.Left, AxisPosition.Right], y, data, axes);
-    const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale, curve)
+    const xList = getValueList(x, data);
+    const yList = getValueList(y, data);
+    const xScale = getContinuousValuesScale(dimensions, [AxisPosition.Bottom], xList, axes);
+    const yScale = getContinuousValuesScale(dimensions, [AxisPosition.Left, AxisPosition.Right], yList, axes);
+
+    const xBuild = { ...xList, scale: xScale };
+    const yBuild = { ...yList, scale: yScale };
+
+    const linePath = getLinePath(xList.values, yList.values, xScale, yScale, curve)
     const seriesName = getSeriesName(props);
     const points = mapXYtoPoints(xBuild, yBuild, pointVisual);
 

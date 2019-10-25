@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { select, timeFormat, extent } from 'd3';
-import { getAxisPositionalProperties, AxisProps, getScale, getInjectedAxisProps, getValueTypeName, getValues } from './Axis';
+import { getAxisPositionalProperties, AxisProps, getScale, getInjectedAxisProps, getValueList } from './Axis';
 import defaults from '../defaults';
 import { chartContext } from './Chart';
 interface DateAxisProps {
@@ -23,8 +23,8 @@ const DateAxis: React.FunctionComponent<AxisProps & DateAxisProps> = (props) => 
 
     const axisRef = React.useRef(null);
     const { translation, generator: axisGenerator, start, end } = getAxisPositionalProperties(position, dimensions);
-    const values = getValues(valueSource, data);
-    const dataType = getValueTypeName(values[0]);
+    const { values, typeName: dataType } = getValueList(valueSource, data);
+
     const range = extent(values as Date[]);
     const scale = getScale(dataType, range, start, end);
     let effectiveFormat = (format === null || format === undefined) ?

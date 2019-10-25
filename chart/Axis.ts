@@ -1,6 +1,6 @@
 import { axisBottom, axisLeft, scaleTime, scaleLinear, extent, Numeric, axisTop, axisRight, scalePow } from "d3";
 import { rd3 } from ".";
-import { ValueType, stringName } from "..";
+import { ValueType } from "..";
 import { ValueTypeName, ChartAxis } from "./Chart";
 import ChartAxesFinder from "./ChartAxesFinder";
 import * as d3 from 'd3';
@@ -68,7 +68,7 @@ function isDate(value: string | number | Date): boolean {
     return (d instanceof Date && isFinite(d));
 }
 
-export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName | 'string' {
+export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName {
 
     if (!Number.isNaN(value as any)) {
         return ValueTypeName.number;
@@ -83,9 +83,9 @@ export function getValueTypeName<T extends ValueType>(value: T): ValueTypeName |
     return ValueTypeName.unknown;
 }
 
-export function getValues(
+export function getValueList(
     valueSource: rd3.ValueSource,
-    data?: Datum[]) {
+    data?: Datum[]): rd3.ValueList {
     const { values, valuesFromProperty } = valueSource;
     if (!(values || valuesFromProperty)) {
         throw new Error("scale build must have either values or valuesFromProperty defined");
@@ -96,14 +96,24 @@ export function getValues(
     }
 
     if (values) {
-        return values;
+        return {
+            values,
+            typeName: getValueTypeName(values[0])
+        };
     }
 
     if (!data || !valuesFromProperty) {
-        return [];
+        return {
+            values: [],
+            typeName: undefined
+        };
     }
 
-    return data.map(d => d[valuesFromProperty]) as Date[] | number[];
+    const valuesFromData = data.map(d => d[valuesFromProperty]) as ValueType[]
+    return {
+        values: valuesFromData,
+        typeName: getValueTypeName(valuesFromData[0])
+    };
 }
 
 export function getScale<T extends ValueType>(
@@ -131,7 +141,7 @@ export function getScale<T extends ValueType>(
         .range([start, end]);
 }
 
-function calculateLineScale<T extends ValueType>(
+function calculateContinuousValuesScale<T extends ValueType>(
     chart: any,
     range: [T, T],
     dataType: ValueTypeName,
@@ -140,15 +150,14 @@ function calculateLineScale<T extends ValueType>(
     return getScale(dataType, range, start, end);
 }
 
-export function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]): ValueBuild {
-    const values = getValues(valueSource, data);
-    const dataType = getValueTypeName(values[0]);
-    const range = extent(values) as [ValueType, ValueType];
+export function getContinuousValuesScale(chart: any,
+    positions: AxisPosition[],
+    continuousValueList: rd3.ValueList,
+    chartAxes?: ChartAxis[]): any {
+    const { values, typeName: dataType } = continuousValueList;
+    const range = extent(values as number[]) as [ValueType, ValueType];
     if (chartAxes === null || chartAxes === undefined) {
-        return {
-            values,
-            scale: calculateLineScale(chart, range, dataType, positions[0])
-        }
+        return calculateContinuousValuesScale(chart, range, dataType, positions[0])
     }
 
     let mostNarrowRange = (new ChartAxesFinder(chartAxes))
@@ -156,15 +165,10 @@ export function getLineScale(chart: any, positions: AxisPosition[], valueSource:
         .withinRange(range)
         .mostNarrowRange();
 
-    const scale = (mostNarrowRange) ? mostNarrowRange.scale : calculateLineScale(chart, range, dataType, positions[0]);
-    return {
-        values,
-        scale
-    };
-
+    return (mostNarrowRange) ? mostNarrowRange.scale : calculateContinuousValuesScale(chart, range, dataType, positions[0]);
 }
 
-function calculateBarScale(
+function calculateBandValuesScale(
     chart: any,
     range: string[],
     position: AxisPosition) {
@@ -175,10 +179,10 @@ function calculateBarScale(
         .domain(range);
 }
 
-export function getBarScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]) {
-    const sourceValues = getValues(valueSource, data);
+export function getBandValuesScale(chart: any, positions: AxisPosition[], scaleValues: rd3.ValueList, chartAxes?: ChartAxis[]) {
+    const { values: sourceValues, typeName: dataType } = scaleValues;
     let values: string[] = [];
-    const dataType = getValueTypeName(values[0]);
+
     if (dataType == ValueTypeName.string) {
         values = (sourceValues as unknown) as string[];
     } else if (dataType == ValueTypeName.Date) {
@@ -188,13 +192,7 @@ export function getBarScale(chart: any, positions: AxisPosition[], valueSource: 
     }
 
     if (chartAxes === null || chartAxes === undefined) {
-        return {
-            values,
-            scale: calculateBarScale(chart, values, positions[0])
-        }
+        return calculateBandValuesScale(chart, values, positions[0]);
     }
-    return {
-        values,
-        scale: calculateBarScale(chart, values, positions[0])
-    }
+    return calculateBandValuesScale(chart, values, positions[0]);
 }

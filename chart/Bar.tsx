@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AxisPosition, getLineScale, getBarScale } from './Axis';
+import { AxisPosition, getContinuousValuesScale, getBandValuesScale, getValueList } from './Axis';
 import { rd3 } from '.';
 import { SeriesActionNames, getVisibility, chartContext } from './Chart';
 import { ValueType } from '..';
@@ -62,11 +62,16 @@ function getSeriesName(props: BarProps) {
 
 const Bar: React.FunctionComponent<BarProps> = (props) => {
     const { axes, dimensions, data, dispatchSeriesAction } = React.useContext(chartContext);
-
     const { color, x, y, index, visible } = props;
-    const xBuild = getBarScale(dimensions, [AxisPosition.Bottom], x, data, axes);
-    const yBuild = getLineScale(dimensions, [AxisPosition.Left, AxisPosition.Right], y, data, axes);
-    const rects = getBarRects(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale)
+    const xList = getValueList(x, data);
+    const yList = getValueList(y, data);
+    const xScale = getBandValuesScale(dimensions, [AxisPosition.Bottom], xList, axes);
+    const yScale = getContinuousValuesScale(dimensions, [AxisPosition.Left, AxisPosition.Right], yList, axes);
+
+    const xBuild = { ...xList, scale: xScale };
+    const yBuild = { ...yList, scale: yScale };
+
+    const rects = getBarRects(xList.values, yList.values, xScale, yScale)
     const seriesName = getSeriesName(props);
 
     React.useEffect(() => {

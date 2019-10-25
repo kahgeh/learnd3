@@ -1,6 +1,6 @@
 import { ScaleBuild } from "./Axis";
 import { ScaleContinuousNumeric } from "d3";
-import { ChartAxis } from "./Chart";
+import { ChartAxis, ValueTypeName } from "./Chart";
 import { ValueType } from "..";
 
 
@@ -26,5 +26,10 @@ declare module rd3 {
         color: string;
         visible: boolean;
         point: PointVisual;
+    }
+
+    interface ValueList {
+        values: ValueType[],
+        typeName?: ValueTypeName
     }
 }
