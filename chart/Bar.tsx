@@ -10,7 +10,7 @@ function bar() {
     const barObj = function (points: [number, number][], width: number) {
         const rects = [];
         for (const point of points) {
-            rects.push({ x: _fx(point), y: _fy([point[0], 0]) - _fy(point), width, height: _fy(point) });
+            rects.push({ x: _fx(point), y: _fy(point), width, height: _fy([point[0], 0]) - _fy(point) });
         }
         return rects;
     }
