@@ -24,6 +24,7 @@ export interface ValueBuild {
 export enum ValueTypeName {
     number = 'number',
     Date = 'Date',
+    string = 'string',
     unknown = 'unknown'
 }
 
@@ -220,6 +221,14 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
             dispatchContextMenuAction,
         }}>
             <svg width={width + 2 * margin} height={height + 2 * margin} className="chart-svg">
+                <g>
+                    {
+                        axes ? axes.map((axis, i) => {
+                            const originalProps = axis.props;
+                            return React.cloneElement(axis, { ...originalProps, key: i, index: i });
+                        }) : null
+                    }
+                </g>
                 {
                     props.children ? getArray(props.children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
                         const originalProps = child.props;
@@ -231,14 +240,6 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                         });
                     }) : null
                 }
-                <g>
-                    {
-                        axes ? axes.map((axis, i) => {
-                            const originalProps = axis.props;
-                            return React.cloneElement(axis, { ...originalProps, key: i, index: i });
-                        }) : null
-                    }
-                </g>
             </svg>
             <Legend
                 chartSeries={chartSeries}

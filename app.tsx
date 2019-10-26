@@ -10,6 +10,7 @@ import Line from './chart/Line';
 import { circle, rectangle } from './chart/PointVisual';
 import { curveMonotoneX, curveStep } from 'd3';
 import Slider, { SliderPosition } from './Slider';
+import Bar from './chart/Bar';
 
 const App: React.FunctionComponent = () => {
     const measurements = getMayRainfall().map(d => ({ date: new Date(Date.parse(d.date)), value: d.value }));
@@ -42,6 +43,10 @@ const App: React.FunctionComponent = () => {
                             label="Arbitray"
                             valueSource={{ values: [0, 40] }} />)]}
                 >
+                    <Bar color="beige"
+                        x={{ values: [1, 2, 3, 4] }}
+                        y={{ values: [40, 30, 20, 10] }}
+                    />
                     <Line color="red"
                         x={{ values: [1, 2, 3, 4] }}
                         y={{ values: [10, 20, 30, 40] }}
@@ -59,7 +64,6 @@ const App: React.FunctionComponent = () => {
                         curve={curveStep} />
                 </Chart>
                 }
-                bottom range emphsis
             </div>
             <div className="chart-footer">
             </div>

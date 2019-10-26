@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { line, extent, values } from 'd3';
-import { getScale, getValues, getValueTypeName, getAxisPositionalProperties, AxisPosition } from './Axis';
+import { line } from 'd3';
+import { AxisPosition, getContinuousValuesScale, getValueList } from './Axis';
 import { rd3 } from '.';
-import { ChartAxis, ValueTypeName, SeriesAction, SeriesActionNames, getVisibility, mapXYtoPoints, ValueBuild, chartContext } from './Chart';
+import { SeriesActionNames, getVisibility, mapXYtoPoints, chartContext } from './Chart';
 import { ValueType } from '..';
-import ChartAxesFinder from './ChartAxesFinder';
 import { PointVisual, generate } from './PointVisual';
+
 function getLinePath<T extends ValueType>(
     x: T[],
     y: T[],
@@ -47,46 +47,20 @@ function getSeriesName(props: LineProps) {
     return `series-${index}`
 }
 
-function calculateScale<T extends ValueType>(
-    chart: any,
-    range: [T, T],
-    dataType: ValueTypeName,
-    position: AxisPosition) {
-    const { start, end } = getAxisPositionalProperties(position, chart);
-    return getScale(dataType, range, start, end);
-}
-
-function getLineScale(chart: any, positions: AxisPosition[], valueSource: rd3.ValueSource, data?: any, chartAxes?: ChartAxis[]): ValueBuild {
-    const values = getValues(valueSource, data);
-    const dataType = getValueTypeName(values[0]);
-    const range = extent(values) as [ValueType, ValueType];
-    if (chartAxes === null || chartAxes === undefined) {
-        return {
-            values,
-            scale: calculateScale(chart, range, dataType, positions[0])
-        }
-    }
-
-    let mostNarrowRange = (new ChartAxesFinder(chartAxes))
-        .getSimilarPositionAndType(positions, dataType)
-        .withinRange(range)
-        .mostNarrowRange();
-
-    const scale = (mostNarrowRange) ? mostNarrowRange.scale : calculateScale(chart, range, dataType, positions[0]);
-    return {
-        values,
-        scale
-    };
-
-}
 
 const Line: React.FunctionComponent<LineProps> = (props) => {
     const { axes, dimensions, data, dispatchSeriesAction } = React.useContext(chartContext);
 
     const { color, x, y, pointVisual, index, visible, curve } = props;
-    const xBuild = getLineScale(dimensions, [AxisPosition.Bottom], x, data, axes);
-    const yBuild = getLineScale(dimensions, [AxisPosition.Left, AxisPosition.Right], y, data, axes);
-    const linePath = getLinePath(xBuild.values, yBuild.values, xBuild.scale, yBuild.scale, curve)
+    const xList = getValueList(x, data);
+    const yList = getValueList(y, data);
+    const xScale = getContinuousValuesScale(dimensions, [AxisPosition.Bottom], xList, axes);
+    const yScale = getContinuousValuesScale(dimensions, [AxisPosition.Left, AxisPosition.Right], yList, axes);
+
+    const xBuild = { ...xList, scale: xScale };
+    const yBuild = { ...yList, scale: yScale };
+
+    const linePath = getLinePath(xList.values, yList.values, xScale, yScale, curve)
     const seriesName = getSeriesName(props);
     const points = mapXYtoPoints(xBuild, yBuild, pointVisual);
 
