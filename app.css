@@ -9,16 +9,22 @@
 .drawer-item{
     display: flex;
     flex-direction: column;
+    height: 2em;
+    padding: 0.3em;
+}
+
+.button{
+    display: flex;    
+    flex-direction: column;
     border-radius: 1em;
     justify-content: center;
     text-align: center;
     background-color: beige;
     border: 0.5px solid lightgray;
-    height: 2em;
+    padding: 0.5em;
 }
 
-.drawer-item:hover {
-    border-radius: 1em;
+.button:hover {
     background-color: gray;
     color: white;
     cursor: pointer;

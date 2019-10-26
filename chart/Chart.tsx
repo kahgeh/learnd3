@@ -138,7 +138,7 @@ function seriesReducer(state: rd3.Series[], action: SeriesAction) {
     }
 }
 
-interface ContextMenuState {
+export interface ContextMenuState {
     visibility: boolean;
     position: { x: number, y: number };
     source: any;
@@ -173,7 +173,7 @@ function getArray(obj: any) {
     return (Array.isArray(obj)) ? obj : [obj];
 }
 
-interface ChartContext {
+export interface ChartContext {
     dimensions: ChartDimensions;
     axes: ChartAxis[];
     series: rd3.Series[];
@@ -189,8 +189,8 @@ interface ChartDimensions {
     margin: number;
 }
 
+export const emptyContextMenu = { visibility: false, source: null, menuItems: [], position: { x: 0, y: 0 } };
 export const chartContext = React.createContext<ChartContext>({ axes: [], series: [] });
-const emptyContextMenu = { visibility: false, source: null, menuItems: [], position: { x: 0, y: 0 } };
 export const contextMenuContext = React.createContext<ContextMenuState>(emptyContextMenu)
 
 const Chart: React.FunctionComponent<ChartProps> = (props) => {
