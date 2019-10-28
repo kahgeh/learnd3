@@ -9,13 +9,11 @@
 .drawer-item{
     display: flex;
     flex-direction: column;
-    height: 2em;
     padding: 0.3em;
 }
 
 .button{
     display: flex;    
-    flex-direction: column;
     border-radius: 1em;
     justify-content: center;
     text-align: center;

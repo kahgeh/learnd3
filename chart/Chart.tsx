@@ -5,8 +5,6 @@ import { rd3 } from '.';
 import Legend from './Legend';
 import { ValueType } from '..';
 import { Point, PointVisual, renderToolTip } from './PointVisual';
-import { format } from 'd3';
-import PowerScaleSlider from './PowerScaleSlider';
 
 interface ChartProps {
     width: number;
