@@ -9,7 +9,7 @@ const AnnulusChart: React.FunctionComponent = () => {
     return (<MainLayout>
         <Chart width={640} height={480} margin={50}>
             <Annulus
-                categories={{ values: [1, 2, 3, 4] }}
+                categories={{ values: [1, 2, 3, 4, 5, 6] }}
                 totalText="Total cuppas"
                 colorScheme={schemeCategory10} radius={200} innerRadius={120}
             />

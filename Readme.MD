@@ -53,19 +53,24 @@ to get this ...
 - Data beads 
 - Gridlines
 - Legend + interactivity
+- Range emphasis with power scale
+- SVG interactivity (https://github.com/kahgeh/learnsvg)
+- Bar Chart
+- Annulus Chart
+
 
 <img src="https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/4f8a6bbd1aa14f93f4e73674a20377f93e6194a7/currentLineChart.png" width>
-
+(not up da)
 
 ## TBD
-- Range emphasis with power scale 
-    - right clicking on the axis, should bring up the power scale exponent value slider
-- SVG interactivity
-- Annular chart
-
+- Forced directed graph
+- Maps
+- Candle sticks
+- Stacked
 
 # References
 1. https://app.pluralsight.com/library/courses/d3-getting-started/table-of-contents
 2. https://bl.ocks.org/
 3. https://d3fc.io
 4. http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/
+5. https://d3-annotation.susielu.com/
