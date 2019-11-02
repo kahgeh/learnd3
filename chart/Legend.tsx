@@ -42,12 +42,13 @@ const Legend: React.FunctionComponent<LegendProps> = (props) => {
     }
 
     return (
-        <div className='legend'>
-            {
-                chartSeries.map((series, index) =>
-                    LegendSeries(series, index, dispatchSeriesAction))
-            }
-        </div>
+        chartSeries && chartSeries.length > 0 ?
+            <div className='legend'>
+                {
+                    chartSeries.map((series, index) =>
+                        LegendSeries(series, index, dispatchSeriesAction))
+                }
+            </div> : null
     )
 }
 
