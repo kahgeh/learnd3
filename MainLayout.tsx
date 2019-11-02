@@ -21,7 +21,6 @@ export const ChartTypes = [{
 const MainLayout: React.FunctionComponent = ({ children }) => {
     const history = useHistory();
     const location = useLocation();
-    console.log(location);
     let selectedChartTitle = ChartTypes[0].title;
     let selectedChartTypes = ChartTypes.filter((chartType) => location.pathname.endsWith(chartType.name));
     if (selectedChartTypes && selectedChartTypes.length > 0) {

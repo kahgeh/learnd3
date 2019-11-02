@@ -82,7 +82,6 @@ const Bar: React.FunctionComponent<BarProps> = (props) => {
             !getVisibility(visible) ? null :
                 rects.map(
                     (rect, i) => {
-                        console.log(rect);
                         const { x, y, width, height } = rect;
                         return (<rect key={i} x={x} y={y} width={width} height={height} stroke={color} fill={color} />);
                     })

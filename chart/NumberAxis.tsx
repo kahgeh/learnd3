@@ -26,13 +26,11 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
     const scale = getScale(dataType, range, start, end, exponent)
     const axisGenerator = generator(scale);
     const axisGridLineGenerator = generator(scale);
-    console.log(`exponent in axis ${id} is ${exponent}`)
     React.useEffect(() => {
         dispatchAxesAction({ type: 'add', payload: { type: 'numberAxis', id, position, exponent, scaleBuild: { position, dataType, range, valueSource }, scale } });
         select(axisRef.current).call(axisGenerator);
         select(axisRef.current)
             .on("contextmenu", function (d, index) {
-                console.log(`${axisRef.current} ${d}`);
                 dispatchContextMenuAction({ type: 'show', payload: { source: axisRef.current, position: { x: currentEvent.pageX, y: currentEvent.pageY }, menuItems: [(<PowerScaleSlider key={1} axisId={id} />)] } });
                 currentEvent.preventDefault();
             })

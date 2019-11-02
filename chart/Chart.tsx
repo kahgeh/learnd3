@@ -72,9 +72,7 @@ function axesReducer(state: ChartAxis[], action: AxisAction) {
             return [...(state.filter((axis: any) => axis.id != payload.id)), payload];
         case AxisActionNames.updateExponent:
             const axis = state.filter((axis: any) => axis.id == payload.id)[0];
-            console.log(`updating exponent value for axis ${axis.id} with new value ${payload.exponent}`);
             const updatedAxis = { ...axis, exponent: payload.exponent };
-            console.log(updatedAxis);
             return [...(state.filter((axis: any) => axis.id != payload.id)), updatedAxis]
         default:
             throw new Error(`unexpected action ${type}`);
