@@ -3,11 +3,16 @@ import './MainLayout.css';
 import { useHistory, useLocation } from "react-router";
 import LineBarChart from "./LineBarChart";
 import AnnulusChart from "./AnnulusChart";
+import AnimatedBubble from './AnimatedBubble';
+import ForcedDirectedGraph from './ForcedDirectedGraph';
 
 export enum ChartTypeNames {
-    LineAndBar = "lineBarChart",
-    Annulus = "annulusChart"
+    LineAndBar = 'lineBarChart',
+    Annulus = 'annulusChart',
+    AnimatedBubble = 'animatedBubble',
+    ForcedDirectGraph = 'forcedDirectedGraph'
 }
+
 export const ChartTypes = [{
     name: ChartTypeNames.LineAndBar,
     title: 'Line and Bar Chart',
@@ -16,6 +21,14 @@ export const ChartTypes = [{
     name: ChartTypeNames.Annulus,
     title: 'Annulus Chart',
     component: AnnulusChart
+}, {
+    name: ChartTypeNames.AnimatedBubble,
+    title: 'Animated Bubble',
+    component: AnimatedBubble
+}, {
+    name: ChartTypeNames.ForcedDirectGraph,
+    title: 'Forced Direct Graph',
+    component: ForcedDirectedGraph
 }]
 
 const MainLayout: React.FunctionComponent = ({ children }) => {

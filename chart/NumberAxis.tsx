@@ -19,7 +19,7 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
 
     const axisRef = React.useRef(null);
     const axisGridlinesRef = React.useRef(null);
-    const { translation, generator, start, end, perpendicularWidth } = getAxisPositionalProperties(position, dimensions);
+    const { translation, gridLineTranslation, generator, start, end, perpendicularWidth } = getAxisPositionalProperties(position, dimensions);
     const { values, typeName: dataType } = getValueList(valueSource, data);
 
     const range = extent(values as number[]);
@@ -47,7 +47,7 @@ const NumberAxis: React.FunctionComponent<AxisProps> = (props) => {
 
     return (
         <>
-            <g className="gridlines" ref={axisGridlinesRef} transform={translation} />
+            <g className="gridlines" ref={axisGridlinesRef} transform={gridLineTranslation} />
             <g ref={axisRef} transform={translation} id={id} />
         </>
     );

@@ -43,24 +43,28 @@ export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.C
     if (position === AxisPosition.Bottom) {
         const start = margin;
         const end = margin + width;
-        return { translation: `translate(0,${height + margin})`, generator: axisBottom, start, end, perpendicularWidth: height };
+        const translation = `translate(0,${height + margin})`
+        return { translation, gridLineTranslation: `translate(0,${margin})`, generator: axisBottom, start, end, perpendicularWidth: height };
     }
 
     if (position === AxisPosition.Left) {
         const start = height + margin;
         const end = margin;
-        return { translation: `translate(${margin},0)`, generator: axisLeft, start, end, perpendicularWidth: -width };
+        const translation = `translate(${margin},0)`;
+        return { translation, gridLineTranslation: translation, generator: axisLeft, start, end, perpendicularWidth: -width };
     }
 
     if (position === AxisPosition.Right) {
         const start = height + margin;
         const end = margin;
-        return { translation: `translate(${margin + width},0)`, generator: axisRight, start, end, perpendicularWidth: width };
+        const translation = `translate(${margin + width},0)`;
+        return { translation, gridLineTranslation: translation, generator: axisRight, start, end, perpendicularWidth: width };
     }
 
     const start = margin;
     const end = margin;
-    return { translation: `translate(0,0)`, generator: axisTop, start, end, perpendicularWidth: height }
+    const translation = `translate(0,0)`;
+    return { translation, gridLineTranslation: translation, generator: axisTop, start, end, perpendicularWidth: height }
 }
 
 function isDate(value: string | number | Date): boolean {
