@@ -31,7 +31,7 @@ const AnimatedBubble: React.FunctionComponent = (props) => {
     }
 
     React.useEffect(() => {
-        const timerHandle = setInterval(generateData, 3000);
+        const timerHandle = setInterval(generateData, 5000);
         return () => {
             clearInterval(timerHandle);
         }
@@ -50,7 +50,7 @@ const AnimatedBubble: React.FunctionComponent = (props) => {
                 showGridLines={true}
                 valueSource={{ values: [1, 8] }} />)]}
         >
-            <Bubble size={bubble.size} x={bubble.x} y={bubble.y} colorScheme={schemeCategory10} transitionDuration={1000} />
+            <Bubble size={bubble.size} x={bubble.x} y={bubble.y} colorScheme={schemeCategory10} transitionDuration={4000} />
         </Chart>
     </MainLayout>);
 };
