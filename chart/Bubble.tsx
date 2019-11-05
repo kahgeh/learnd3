@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { getValueList, getContinuousValuesScale, AxisPosition, getValueTypeName } from './Axis';
+import { getValueList, getContinuousValuesScale, AxisPosition } from './Axis';
 import { rd3 } from '.';
-import { scaleOrdinal, selectAll, select, interpolateTransformSvg, easeLinear, easeBounceIn, easeCubic, easeElastic, easeBounceInOut, easeExpIn, easeExpOut } from 'd3';
+import { scaleOrdinal, selectAll, select, interpolateTransformSvg, easeBounceOut, easeExp } from 'd3';
 import { chartContext, SeriesActionNames, ValueTypeName } from './Chart';
-import { ValueType } from '..';
 
 interface BubbleProps extends rd3.InjectedChartProps {
     size: rd3.ValueSource;
@@ -78,15 +77,15 @@ const Bubble: React.FunctionComponent<BubbleProps> = (props) => {
 
                         select(this)
                             .transition()
-                            .duration(transitionDuration / 4)
-                            .ease(easeExpOut)
+                            .duration(transitionDuration / 2)
+                            .ease(easeBounceOut)
                             .attrTween('transform', function () {
                                 return interpolateTransformSvg(previous, current)
                             })
                             .select('circle')
                             .transition()
-                            .delay(transitionDuration / 2)
-                            .duration(transitionDuration / 4)
+                            .ease(easeExp)
+                            .duration(transitionDuration / 2)
                             .attr("r", sizeList.values[i] / 2);
                         return;
                     }
