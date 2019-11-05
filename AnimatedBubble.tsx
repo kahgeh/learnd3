@@ -5,11 +5,13 @@ import { schemeCategory10 } from 'd3';
 import Chart, { ValueTypeName } from './chart/Chart';
 import NumberAxis from './chart/NumberAxis';
 import { AxisPosition } from './chart/Axis';
-import rd3 from './chart/'
-import { ValueType } from '.';
+import { rd3 } from './chart';
+
+type BubbleValues = { size: rd3.ValueSource, x: rd3.ValueList, y: rd3.ValueSource };
+
 const AnimatedBubble: React.FunctionComponent = (props) => {
 
-    const [bubble, setBubble] = React.useState<>({
+    const [bubble, setBubble] = React.useState<BubbleValues>({
         size: { values: [] }, x: { values: [] }, y: { values: [] }
     });
 
