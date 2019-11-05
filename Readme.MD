@@ -57,10 +57,8 @@ to get this ...
 - SVG interactivity (https://github.com/kahgeh/learnsvg)
 - Bar Chart
 - Annulus Chart
+- Bubble Chart ( animation - radius, and y ordinate via transform translation )
 
-
-<img src="https://gist.githubusercontent.com/kahgeh/a473093ea66190b2449fa85788f5e66c/raw/4f8a6bbd1aa14f93f4e73674a20377f93e6194a7/currentLineChart.png" width>
-(not up da)
 
 ## TBD
 - Forced directed graph

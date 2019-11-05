@@ -9,7 +9,7 @@ import rd3 from './chart/'
 import { ValueType } from '.';
 const AnimatedBubble: React.FunctionComponent = (props) => {
 
-    const [bubble, setBubble] = React.useState({
+    const [bubble, setBubble] = React.useState<>({
         size: { values: [] }, x: { values: [] }, y: { values: [] }
     });
 
