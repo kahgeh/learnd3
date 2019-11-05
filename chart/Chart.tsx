@@ -194,14 +194,24 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
     const [chartAxes, dispatchAxesAction] = React.useReducer(axesReducer, []);
     const [chartSeries, dispatchSeriesAction] = React.useReducer(seriesReducer, []);
     const [contextMenu, dispatchContextMenuAction] = React.useReducer(contextMenuReducer, emptyContextMenu);
-
-    const handleEscKey = (e: KeyboardEvent) => {
-        if (e.keyCode === 27) {
-            dispatchContextMenuAction({ type: ContextMenuActionNames.hide })
-        }
-    }
+    const contextMenuRef = React.useRef();
 
     React.useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            if (contextMenu.visibility && contextMenuRef.current !== e.target.parentNode) {
+                dispatchContextMenuAction({ type: ContextMenuActionNames.hide })
+            }
+        }
+        document.addEventListener('mousedown', handleClick, false);
+        return () => document.removeEventListener('mousedown', handleClick, false);
+    }, [contextMenu.visibility])
+
+    React.useEffect(() => {
+        const handleEscKey = (e: KeyboardEvent) => {
+            if (e.keyCode === 27) {
+                dispatchContextMenuAction({ type: ContextMenuActionNames.hide });
+            }
+        }
         document.addEventListener('keydown', handleEscKey, false);
         return () => document.removeEventListener('keydown', handleEscKey, false);
     })
@@ -241,7 +251,7 @@ const Chart: React.FunctionComponent<ChartProps> = (props) => {
                 chartSeries={chartSeries}
             />
             {
-                contextMenu.visibility ? (<div className="chart-contextmenu" style={{ left: `${contextMenu.position.x}px`, top: `${contextMenu.position.y}px` }}>
+                contextMenu.visibility ? (<div ref={contextMenuRef} className="chart-contextmenu" style={{ left: `${contextMenu.position.x}px`, top: `${contextMenu.position.y}px` }}>
                     {contextMenu.menuItems}
                 </div>) : null
             }
