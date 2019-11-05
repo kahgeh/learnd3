@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getValueList, getContinuousValuesScale, AxisPosition, getValueTypeName } from './Axis';
 import { rd3 } from '.';
-import { scaleOrdinal, selectAll, select } from 'd3';
+import { scaleOrdinal, selectAll, select, interpolateTransformSvg, easeLinear, easeBounceIn, easeCubic, easeElastic, easeBounceInOut, easeExpIn, easeExpOut } from 'd3';
 import { chartContext, SeriesActionNames, ValueTypeName } from './Chart';
 import { ValueType } from '..';
 
@@ -72,10 +72,21 @@ const Bubble: React.FunctionComponent<BubbleProps> = (props) => {
             .each(
                 function (_, i) {
                     if (transitionDuration) {
+                        const current = `translate(${xScale(xList.values[i])},${yScale(yList.values[i])})`
+                        const previous = select(this)
+                            .attr('transform');
+
                         select(this)
+                            .transition()
+                            .duration(transitionDuration / 4)
+                            .ease(easeExpOut)
+                            .attrTween('transform', function () {
+                                return interpolateTransformSvg(previous, current)
+                            })
                             .select('circle')
                             .transition()
-                            .duration(transitionDuration)
+                            .delay(transitionDuration / 2)
+                            .duration(transitionDuration / 4)
                             .attr("r", sizeList.values[i] / 2);
                         return;
                     }
@@ -89,7 +100,7 @@ const Bubble: React.FunctionComponent<BubbleProps> = (props) => {
     return (<>
         {
             sizeList.values.map((value, index) => (
-                <g key={index} id={`bubble-${index}`} transform={`translate(${xScale(xList.values[index])},${yScale(yList.values[index])})`}>
+                <g key={index} id={`bubble-${index}`}>
                     <circle fill={color(index)} />
                 </g>))
         }

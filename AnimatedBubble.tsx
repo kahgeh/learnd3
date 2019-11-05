@@ -1,23 +1,33 @@
 import * as React from 'react';
 import MainLayout from './MainLayout';
 import Bubble from './chart/Bubble';
-import SimulatedForceLayout from './chart/SimulatedForceLayout';
 import { schemeCategory10 } from 'd3';
-import Chart from './chart/Chart';
+import Chart, { ValueTypeName } from './chart/Chart';
 import NumberAxis from './chart/NumberAxis';
 import { AxisPosition } from './chart/Axis';
-
+import rd3 from './chart/'
+import { ValueType } from '.';
 const AnimatedBubble: React.FunctionComponent = (props) => {
 
-    const [size, setSize] = React.useState({ values: [] });
+    const [bubble, setBubble] = React.useState({
+        size: { values: [] }, x: { values: [] }, y: { values: [] }
+    });
 
     const generateData = function () {
         const valueCount = 8;
-        const newValues = [];
-        for (let i = 0; i < valueCount; i++) {
-            newValues.push(Math.random() * 100);
+        const newSizeValues = [];
+        const xValues = []
+        const yValues = []
+        for (let i = 1; i <= valueCount; i++) {
+            newSizeValues.push(Math.random() * 100);
+            xValues.push(i);
+            yValues.push(Math.random() * valueCount);
         }
-        setSize({ values: newValues });
+        setBubble({
+            size: { values: newSizeValues },
+            x: { values: xValues },
+            y: { values: yValues }
+        });
     }
 
     React.useEffect(() => {
@@ -40,7 +50,7 @@ const AnimatedBubble: React.FunctionComponent = (props) => {
                 showGridLines={true}
                 valueSource={{ values: [1, 8] }} />)]}
         >
-            <Bubble size={size} colorScheme={schemeCategory10} transitionDuration={1000} />
+            <Bubble size={bubble.size} x={bubble.x} y={bubble.y} colorScheme={schemeCategory10} transitionDuration={1000} />
         </Chart>
     </MainLayout>);
 };
