@@ -6,12 +6,12 @@ import { ValueType } from "..";
 
 declare module rd3 {
     interface InjectedChartProps {
-        chart?: ChartDimension;
+        chart?: Dimension;
         data?: Datum[];
         dispatchAxesAction?: (action: any) => void;
         exponent?: number;
     }
-    interface ChartDimension {
+    interface Dimension {
         width: number;
         height: number;
         margin: number;

@@ -170,19 +170,13 @@ function getArray(obj: any) {
 }
 
 export interface ChartContext {
-    dimensions: ChartDimensions;
+    dimensions: rd3.Dimension;
     axes: ChartAxis[];
     series: rd3.Series[];
     dispatchSeriesAction: (action: SeriesAction) => void;
     dispatchAxesAction: (action: AxisAction) => void;
     dispatchContextMenuAction: (action: ContextMenuAction) => void;
     data?: Datum[];
-}
-
-interface ChartDimensions {
-    width: number;
-    height: number;
-    margin: number;
 }
 
 export const emptyContextMenu = { visibility: false, source: null, menuItems: [], position: { x: 0, y: 0 } };

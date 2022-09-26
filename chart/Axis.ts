@@ -38,7 +38,7 @@ export function getInjectedAxisProps(props: any) {
     return { index };
 }
 
-export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.ChartDimension) {
+export function getAxisPositionalProperties(position: AxisPosition, chart: rd3.Dimension) {
     const { width, height, margin } = chart;
     if (position === AxisPosition.Bottom) {
         const start = margin;

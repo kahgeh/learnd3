@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { rd3 } from '.';
 
 interface SimulatedForceLayoutProps {
     width: number;
@@ -13,22 +14,32 @@ function getArray(obj: any) {
     }
     return (Array.isArray(obj)) ? obj : [obj];
 }
+export interface ChartContext {
+    dimensions: rd3.Dimension;
+    data?: Datum[];
+}
 
-
-const SimulatedForceLayout: React.FunctionComponent<SimulatedForceLayoutProps> = ({ children, height, width }) => {
+const simulatedForcedLayout = React.createContext({});
+const SimulatedForceLayout: React.FunctionComponent<SimulatedForceLayoutProps> = ({ children, height, width, margin, data }) => {
     return (<div className="chart">
-        <svg height={height} width={width} className="chart-svg">
-            {
-                children ? getArray(children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
-                    const originalProps = child.props;
-                    return React.cloneElement(child, {
-                        ...originalProps,
-                        key: i,
-                        index: i
-                    });
-                }) : null
-            }
-        </svg>
+        <simulatedForcedLayout.Provider value={{
+            dimensions: { width, height, margin },
+            data,
+        }}>
+
+            <svg height={height} width={width} className="chart-svg">
+                {
+                    children ? getArray(children).map((child: React.DetailedReactHTMLElement<any, HTMLElement>, i: number) => {
+                        const originalProps = child.props;
+                        return React.cloneElement(child, {
+                            ...originalProps,
+                            key: i,
+                            index: i
+                        });
+                    }) : null
+                }
+            </svg>
+        </simulatedForcedLayout.Provider>
     </div>);
 }
 
